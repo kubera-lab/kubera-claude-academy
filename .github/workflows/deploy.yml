@@ -1,0 +1,70 @@
+name: KUBERA Claude Academy — check and publish (Cloudflare Pages, free plan)
+
+# On every push to main: type check, unit tests, build, end-to-end tests on the built site,
+# then publish dist/ to the Cloudflare Pages project "kubera-claude-academy" (production branch main).
+# Free plan only: static files + one Pages Function stub (functions/api/tutor.ts returns 501).
+# Needs one repository secret: CLOUDFLARE_API_TOKEN (Account · Cloudflare Pages · Edit).
+# Without the secret the job still checks and builds, and skips the publish step.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: academy-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 53145c4dea030ee26ac14b28a9311f61
+      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Unit and integration tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: End-to-end tests on the built site
+        run: |
+          npx playwright install --with-deps chromium
+          npx vite preview --port 4173 --strictPort &
+          npx --yes wait-on http://localhost:4173/ --timeout 30000
+          npm run e2e
+      - name: Create the Pages project if it does not exist yet (free plan)
+        if: env.HAS_TOKEN == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx --yes wrangler@4 pages project create kubera-claude-academy --production-branch main || echo "project already exists"
+      - name: Publish to Cloudflare Pages (production)
+        if: env.HAS_TOKEN == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: >
+          npx --yes wrangler@4 pages deploy dist
+          --project-name kubera-claude-academy --branch main
+          --commit-hash "$GITHUB_SHA"
+          --commit-message "main $(echo $GITHUB_SHA | cut -c1-7)"
+      - name: Check the live site
+        if: env.HAS_TOKEN == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          sleep 20
+          for p in / /sql-wasm.wasm /api/tutor; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "https://kubera-claude-academy.pages.dev$p" -X GET)
+            echo "$p → $code"
+          done
+          curl -sf https://kubera-claude-academy.pages.dev/ | grep -q "KUBERA Claude Academy"
