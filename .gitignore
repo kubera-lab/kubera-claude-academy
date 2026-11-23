@@ -1,0 +1,7 @@
+node_modules/
+dist/
+e2e/out-*.png
+*.log
+.wrangler/
+.env*
+public/sql-wasm.wasm
