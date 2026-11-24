@@ -1,0 +1,15 @@
+name: Content improvement
+description: A lesson, glossary term, translation or source needs fixing
+labels: [content]
+body:
+  - type: input
+    id: lesson
+    attributes: { label: Course and lesson }
+    validations: { required: true }
+  - type: textarea
+    id: problem
+    attributes: { label: What is unclear or wrong }
+    validations: { required: true }
+  - type: textarea
+    id: source
+    attributes: { label: Source (if a fact is wrong), description: Official link and the date you checked it }

@@ -1,8 +1,35 @@
 # KUBERA Claude Academy
 
-> Separate platform built with Claude. It started as v1.0 in `kubera-ai-academy` (PR #1, written by Claude) and moved here on 23 Nov 2026 when the two academies were split; `kubera-ai-academy` stays the Gemini Academy and is not changed by this project.
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6) ![React](https://img.shields.io/badge/React-18-61dafb) ![Tests](https://img.shields.io/badge/tests-98%20unit%20%C2%B7%20221%20e2e-2ea44f) ![Hosting](https://img.shields.io/badge/Cloudflare%20Pages-free%20plan-f38020) ![Paid APIs](https://img.shields.io/badge/paid%20AI%20API-not%20required-555)
 
-Live site (after release): **https://kubera-claude-academy.pages.dev**
+**Live site:** https://kubera-claude-academy.pages.dev (after the first release)
+
+## Start in one minute
+1. Open the site. No account, no sign-up.
+2. Press **EN / RU** at the top right to choose the language.
+3. Open **Courses** and pick one of the 8 courses.
+4. Each course: read the short lesson → do the **warm-up** → do the **lab** → finish with the **final project** (a real tool).
+5. Press **Check** in any task: the result appears at once, with what to fix.
+6. Download your final project files and add them to your GitHub portfolio. Progress is saved in your browser; **Dashboard → Download progress backup** saves it as a file.
+
+## Screenshots
+| CSV Data Quality Auditor | SQL Report Builder |
+|---|---|
+| ![CSV auditor](docs/screenshots/csv-auditor.png) | ![SQL report builder](docs/screenshots/sql-report-builder.png) |
+| **GeoJSON Coordinate Validator** | **Web Quality Inspector** |
+| ![GeoJSON validator](docs/screenshots/geojson-validator.png) | ![Web inspector](docs/screenshots/web-inspector.png) |
+
+## Two academies, two roles
+KUBERA runs two separate learning platforms. They are developed independently and do not share code.
+
+| | KUBERA Claude Academy (this repository) | KUBERA Gemini Academy |
+|---|---|---|
+| Repository | `kubera-lab/kubera-claude-academy` | `kubera-lab/kubera-ai-academy` |
+| Site | kubera-claude-academy.pages.dev | its own Cloudflare Pages project |
+| Built with | Claude | Gemini |
+| Focus | Hands-on tools and honest, fixed-rule checks; portfolio evidence | UI/UX and its own course set |
+
+> This platform started as v1.0 in `kubera-ai-academy` (PR #1, written by Claude) and moved here on 23 Nov 2026 when the two academies were split. This project never changes the Gemini Academy.
 
 Free, self-paced AI courses for adult beginners. Every lesson ends with a task that is **checked automatically by fixed rules** — real SQL runs in the browser, real JavaScript runs against hidden tests. No account, no paid AI service, no tracking.
 
@@ -86,6 +113,10 @@ functions/api/      tutor interface stub for Cloudflare Pages
 ## Deploy (free)
 
 `.github/workflows/deploy.yml` checks, builds, runs the end-to-end tests and publishes `dist/` to the Cloudflare Pages project **kubera-claude-academy** (free plan) on every push to `main`. It needs one repository secret, `CLOUDFLARE_API_TOKEN`; without it the job still checks and builds and skips publishing. No paid service is required: all courses work without any AI API, and the tutor function stays a 501 stub.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the issue templates (bug, content, tool).
 
 ## Sources
 
