@@ -1,0 +1,22 @@
+name: Bug report
+description: Something does not work or looks wrong
+labels: [bug]
+body:
+  - type: input
+    id: page
+    attributes: { label: Page or lesson, description: "For example #l/dq-final or 'SQL Report Builder'" }
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes: { label: Steps to reproduce, placeholder: "1. Open … 2. Click … 3. See …" }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: What you expected and what happened }
+    validations: { required: true }
+  - type: dropdown
+    id: device
+    attributes: { label: Device, options: [Desktop, Phone, Tablet] }
+  - type: dropdown
+    id: lang
+    attributes: { label: Language, options: [EN, RU] }
