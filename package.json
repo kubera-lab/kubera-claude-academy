@@ -9,7 +9,8 @@
     "prebuild": "npm run wasm",
     "build": "vite build",
     "test": "tsx --test src/engine/*.test.ts src/engine/tools/*.test.ts src/data/*.test.ts",
-    "e2e": "tsx e2e/run.ts"
+    "e2e": "tsx e2e/run.ts",
+    "postbuild": "node scripts/copy-ai-start.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
