@@ -38,11 +38,16 @@ test('объяснение верного ответа начинается со
   }
 });
 
-test('уроки короткие: не больше 10 минут, главная мысль не длиннее 400 символов', () => {
+test('уроки без перегрузки: до 10 минут, до 4 тезисов, каждый тезис не длиннее 320 символов', () => {
   for (const l of COURSE1.lessons) {
     assert.ok(l.minutes <= 10);
-    assert.ok(l.ru.idea.length <= 400, `${l.id}: ${l.ru.idea.length}`);
+    assert.ok(l.ru.points.length <= 4);
+    for (const [, text] of l.ru.points) assert.ok(text.length <= 320, `${l.id}: ${text.length}`);
   }
+});
+
+test('в каждом вопросе 4 варианта', () => {
+  for (const l of COURSE1.lessons) for (const lang of ['ru', 'en']) l[lang].quiz.forEach((q) => assert.equal(q.o.length, 4));
 });
 
 test('8 курсов на главной, открыт только первый', () => {
@@ -78,11 +83,13 @@ test('ошибка попадает в повтор, верный ответ у�
   assert.deepEqual(p.mistakes, []);
 });
 
-test('звёзды: 3 за всё с первого раза, лучший результат сохраняется', () => {
+test('результат урока: сохраняется лучший счёт', () => {
   let p = finishLesson(emptyProgress(), 'c1l1', 4, 4);
   assert.equal(p.stars.c1l1, 3);
+  assert.equal(p.scores.c1l1, 4);
   p = finishLesson(p, 'c1l1', 1, 4);
   assert.equal(p.stars.c1l1, 3);
+  assert.equal(p.scores.c1l1, 4);
   assert.equal(finishLesson(emptyProgress(), 'x', 2, 4).stars.x, 2);
   assert.equal(finishLesson(emptyProgress(), 'x', 0, 4).stars.x, 1);
 });
@@ -103,6 +110,7 @@ test('лаборатория запросов: чем больше частей,
     assert.equal(labResult(lang, []).score, 0);
     const full = labResult(lang, LAB_PARTS);
     assert.equal(full.score, 3);
+    assert.equal(labResult(lang, ['context']).reply, labResult(lang, ['context', 'reqs']).reply, 'без задачи письмо остаётся общим');
     assert.notEqual(full.reply, labResult(lang, []).reply);
     assert.ok(full.prompt.length > labResult(lang, []).prompt.length);
   }
