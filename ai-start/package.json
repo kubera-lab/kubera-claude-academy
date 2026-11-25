@@ -1,0 +1,13 @@
+{
+  "name": "kubera-ai-start",
+  "private": true,
+  "version": "0.1.0",
+  "description": "KUBERA AI START: a free AI school for everyday people. Static site, no build step.",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/logic.test.mjs",
+    "e2e": "node tests/e2e.mjs"
+  },
+  "license": "MIT"
+}
