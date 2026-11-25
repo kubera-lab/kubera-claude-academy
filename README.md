@@ -2,7 +2,9 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6) ![React](https://img.shields.io/badge/React-18-61dafb) ![Tests](https://img.shields.io/badge/tests-98%20unit%20%C2%B7%20221%20e2e-2ea44f) ![Hosting](https://img.shields.io/badge/Cloudflare%20Pages-free%20plan-f38020) ![Paid APIs](https://img.shields.io/badge/paid%20AI%20API-not%20required-555)
 
-**Live site:** https://kubera-claude-academy.pages.dev (after the first release)
+**Live site (free, no sign-up):** https://kubera-lab.github.io/kubera-claude-academy/
+
+**Licence:** [MIT](LICENSE) — free to use, copy and adapt.
 
 ## Start in one minute
 1. Open the site. No account, no sign-up.
@@ -25,7 +27,7 @@ KUBERA runs two separate learning platforms. They are developed independently an
 | | KUBERA Claude Academy (this repository) | KUBERA Gemini Academy |
 |---|---|---|
 | Repository | `kubera-lab/kubera-claude-academy` | `kubera-lab/kubera-ai-academy` |
-| Site | kubera-claude-academy.pages.dev | its own Cloudflare Pages project |
+| Site | kubera-lab.github.io/kubera-claude-academy | not published yet |
 | Built with | Claude | Gemini |
 | Focus | Hands-on tools and honest, fixed-rule checks; portfolio evidence | UI/UX and its own course set |
 
@@ -112,11 +114,17 @@ functions/api/      tutor interface stub for Cloudflare Pages
 
 ## Deploy (free)
 
-`.github/workflows/deploy.yml` checks, builds, runs the end-to-end tests and publishes `dist/` to the Cloudflare Pages project **kubera-claude-academy** (free plan) on every push to `main`. It needs one repository secret, `CLOUDFLARE_API_TOKEN`; without it the job still checks and builds and skips publishing. No paid service is required: all courses work without any AI API, and the tutor function stays a 501 stub.
+The live site is served free by **GitHub Pages** from the `gh-pages` branch, which holds the built `dist/` folder. To update it: `npm run build`, then publish `dist/` to `gh-pages` (for example `npx gh-pages -d dist --dotfiles`).
+
+Optional second host: `.github/workflows/deploy.yml` checks, builds, runs the end-to-end tests and publishes `dist/` to the Cloudflare Pages project **kubera-claude-academy** (free plan) on every push to `main`. It needs one repository secret, `CLOUDFLARE_API_TOKEN`; without it the job still checks and builds and skips publishing. No paid service is required: all courses work without any AI API, and the tutor function stays a 501 stub.
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the issue templates (bug, content, tool).
+
+## Licence
+
+Code and course content: [MIT](LICENSE). Third-party sources keep their own licences (see the in-app **Sources** page).
 
 ## Sources
 
