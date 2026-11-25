@@ -31,7 +31,7 @@ async function noHorizontalScroll(page) {
 
 /** Пройти урок: шаги истории/мысли/практики, затем ответы. wrongFirst — сначала неверно ответить на 1-й вопрос. */
 async function passLesson(page, lesson, { wrongFirst = false } = {}) {
-  for (let s = 0; s < 3; s++) await page.getByRole('button', { name: /Дальше|Next/ }).first().click();
+  for (let s = 0; s < 4; s++) await page.getByRole('button', { name: /Дальше|Next/ }).first().click();
   for (let i = 0; i < lesson.key.length; i++) {
     const opts = page.locator('.opt');
     if (wrongFirst && i === 0) {
@@ -43,7 +43,7 @@ async function passLesson(page, lesson, { wrongFirst = false } = {}) {
     await page.locator('.good-t').waitFor();
     await page.getByRole('button', { name: /Дальше|Next/ }).click();
   }
-  await page.getByRole('heading', { name: /Урок пройден|Lesson complete/ }).waitFor();
+  await page.getByRole('heading', { name: /Главное из урока|Key takeaways/ }).waitFor();
 }
 
 const browser = await chromium.launch();
@@ -70,7 +70,12 @@ for (const [label, ctxOpts] of configs) {
 
   await check(`${label}: урок 1 целиком, с ошибкой и объяснением`, async () => {
     await page.getByRole('link', { name: /Начать первый урок/ }).click();
-    if (shots) await page.screenshot({ path: `${shots}/${label}-story.png`, fullPage: true });
+    if (shots) await page.screenshot({ path: `${shots}/${label}-situation.png`, fullPage: true });
+    await page.getByRole('button', { name: /Дальше/ }).click();
+    if (shots) await page.screenshot({ path: `${shots}/${label}-points.png`, fullPage: true });
+    await page.getByRole('button', { name: /Дальше/ }).click();
+    if (shots) await page.screenshot({ path: `${shots}/${label}-compare.png`, fullPage: true });
+    await page.goto(BASE + '#/c1'); await page.goto(BASE + '#/c1/c1l1');
     await passLesson(page, COURSE1.lessons[0], { wrongFirst: true });
     await noHorizontalScroll(page);
     if (shots) await page.screenshot({ path: `${shots}/${label}-result.png`, fullPage: true });
@@ -91,8 +96,8 @@ for (const [label, ctxOpts] of configs) {
     await page.reload();
     assert.equal(await page.locator('a.lesson').count(), 2);
     await page.goto(BASE);
-    await page.getByRole('link', { name: /Продолжить/ }).click();
-    await page.getByText(/Как чат-бот пишет ответ/).first().waitFor();
+    await page.getByRole('link', { name: /Продолжить обучение/ }).click();
+    await page.getByText(/Как модель составляет ответ/).first().waitFor();
   });
 
   await check(`${label}: закрытый урок по прямой ссылке не открывается`, async () => {
@@ -104,11 +109,11 @@ for (const [label, ctxOpts] of configs) {
     for (const l of COURSE1.lessons.slice(1)) {
       await page.goto(BASE + `#/c1/${l.id}`);
       if (l.sim === 'promptLab') {
-        for (let s = 0; s < 2; s++) await page.getByRole('button', { name: /Дальше/ }).first().click();
+        for (let s = 0; s < 3; s++) await page.getByRole('button', { name: /Дальше/ }).first().click();
         await page.getByText(/Учебная симуляция/).waitFor();
-        assert.match(await page.locator('.bubble.ai').innerText(), /Кому вы хотите/);
+        assert.match(await page.locator('.bubble.ai').innerText(), /Уточните/);
         for (const chip of await page.locator('.chip').all()) await chip.click();
-        assert.match(await page.locator('.bubble.ai').innerText(), /Ирина Петровна/);
+        assert.match(await page.locator('.bubble.ai').innerText(), /скидку 5%/);
         await noHorizontalScroll(page);
         if (shots) await page.screenshot({ path: `${shots}/${label}-lab.png`, fullPage: true });
         await page.goto(BASE + `#/c1`);
@@ -117,16 +122,16 @@ for (const [label, ctxOpts] of configs) {
       await passLesson(page, l);
     }
     await page.goto(BASE + '#/c1');
-    await page.getByText(/Знаток ИИ/).waitFor();
+    await page.getByText(/Курс пройден/).waitFor();
     if (shots) await page.screenshot({ path: `${shots}/${label}-badge.png`, fullPage: true });
   });
 
   await check(`${label}: переключение на английский`, async () => {
     await page.getByRole('button', { name: 'English' }).click();
-    await page.getByText('AI Explorer').waitFor();
+    await page.getByText('Course complete').waitFor();
     assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
     await page.goto(BASE + '#/c1/c1l1');
-    await page.getByRole('heading', { name: 'A short story' }).waitFor();
+    await page.getByRole('heading', { name: 'What generative AI is' }).waitFor();
   });
 
   await check(`${label}: кнопки не меньше 44 пикселей`, async () => {

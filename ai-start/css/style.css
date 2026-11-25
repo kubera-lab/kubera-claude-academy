@@ -145,3 +145,28 @@ footer.foot { text-align: center; color: var(--muted); font-size: 14px; padding:
 .foot p { margin: 6px auto; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Взрослая подача урока */
+.small { font-size: 14px; }
+.card.situation { display: block; height: auto; border-left: 3px solid var(--accent); }
+.card.situation p:last-child { margin-bottom: 0; font-size: 18px; }
+.points { list-style: none; padding: 0; margin: 0; counter-reset: pt; display: grid; gap: 12px; }
+.points li { counter-increment: pt; position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px 16px 58px; max-width: none; }
+.points li::before { content: counter(pt); position: absolute; left: 16px; top: 16px; width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--violet)); color: #0b1020; font: 700 14px var(--mono); }
+.points li strong { display: block; margin-bottom: 4px; }
+.points li p { margin: 0; color: var(--ink); }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 620px) { .cmp { grid-template-columns: 1fr; } }
+.cmp > div { border-radius: 12px; padding: 14px 16px; border: 1px solid var(--line); background: var(--panel); }
+.cmp-bad { border-color: var(--bad) !important; }
+.cmp-bad .eyebrow { color: var(--bad); }
+.cmp-good { border-color: var(--good) !important; }
+.cmp-good .eyebrow { color: var(--good); }
+.mono-q { font: 16px/1.55 var(--body); margin: 8px 0 0; }
+.note { border-left: 3px solid var(--warn); padding: 12px 16px; background: var(--panel); border-radius: 6px; margin-top: 16px; }
+.takeaways { padding-left: 1.2em; display: grid; gap: 8px; font-size: 18px; }
+.score { color: var(--muted); }
+.lnum { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font: 700 14px var(--mono); background: var(--panel-2); border: 1px solid var(--line); color: var(--accent); }
+.lnum.done { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.badge .check { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--good); color: #0b1020; font-weight: 800; font-size: 20px; }
+.badge p { margin: 2px 0 0; }

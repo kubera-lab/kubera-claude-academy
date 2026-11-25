@@ -15,10 +15,13 @@ export function validateLesson(lesson) {
   for (const lang of ['ru', 'en']) {
     const L = lesson[lang];
     if (!L) { errors.push(`${lesson.id}: нет языка ${lang}`); continue; }
-    for (const f of ['title', 'idea', 'example', 'practice', 'prompt']) {
+    for (const f of ['title', 'situation', 'practice', 'prompt']) {
       if (!L[f] || typeof L[f] !== 'string') errors.push(`${lesson.id}/${lang}: пустое поле ${f}`);
     }
-    if (!Array.isArray(L.story) || L.story.length < 2) errors.push(`${lesson.id}/${lang}: короткая история`);
+    if (!Array.isArray(L.points) || L.points.length < 3) errors.push(`${lesson.id}/${lang}: мало тезисов`);
+    else L.points.forEach((pt, i) => { if (!pt[0] || !pt[1]) errors.push(`${lesson.id}/${lang}: пустой тезис ${i}`); });
+    if (!L.compare || !L.compare.bad || !L.compare.good || !L.compare.why) errors.push(`${lesson.id}/${lang}: нет разбора`);
+    if (!Array.isArray(L.takeaways) || L.takeaways.length < 2) errors.push(`${lesson.id}/${lang}: нет итогов`);
     if (!Array.isArray(L.quiz) || L.quiz.length !== lesson.key.length) {
       errors.push(`${lesson.id}/${lang}: число вопросов не совпадает с ключом`);
       continue;
@@ -41,7 +44,7 @@ export function validateLesson(lesson) {
 export const STORE_KEY = 'kubera-ai-start.v1';
 
 export function emptyProgress() {
-  return { lang: null, done: {}, mistakes: [], last: null, stars: {} };
+  return { lang: null, done: {}, mistakes: [], last: null, stars: {}, scores: {} };
 }
 
 /** Безопасно разобрать сохранённый прогресс. Любой мусор → пустой прогресс. */
@@ -56,6 +59,7 @@ export function parseProgress(raw) {
       mistakes: Array.isArray(p.mistakes) ? p.mistakes.filter((m) => typeof m === 'string') : e.mistakes,
       last: typeof p.last === 'string' ? p.last : null,
       stars: p.stars && typeof p.stars === 'object' ? p.stars : e.stars,
+      scores: p.scores && typeof p.scores === 'object' ? p.scores : e.scores,
     };
   } catch {
     return emptyProgress();
@@ -77,6 +81,7 @@ export function finishLesson(progress, lessonId, firstTryCorrect, total) {
     ...progress,
     done: { ...progress.done, [lessonId]: true },
     stars: { ...progress.stars, [lessonId]: Math.max(prev, stars) },
+    scores: { ...(progress.scores || {}), [lessonId]: Math.max((progress.scores || {})[lessonId] || 0, firstTryCorrect) },
   };
 }
 
@@ -96,45 +101,52 @@ export function isUnlocked(progress, lessons, lessonId) {
 // ---------- Симулятор «Лаборатория запросов» ----------
 // Это заранее написанные ответы, а не настоящая нейросеть. На экране это сказано прямо.
 
-export const LAB_PARTS = ['who', 'what', 'how'];
+export const LAB_PARTS = ['context', 'task', 'reqs'];
 
 export const LAB_TEXT = {
   ru: {
     base: 'Напиши письмо.',
     parts: {
-      who: 'Начальнику, Ирине Петровне.',
-      what: 'Прошу отпуск с 10 по 14 марта.',
-      how: 'Коротко и вежливо.',
+      context: 'Я менеджер компании по поставке офисной мебели.',
+      task: 'Клиенту ООО «Вектор»: поставка задерживается на 7 дней из-за поставщика, новый срок 12 декабря.',
+      reqs: 'Тон вежливый и деловой, 5–7 предложений, предложи скидку 5% на следующий заказ.',
     },
-    labels: { who: 'Кому?', what: 'О чём?', how: 'Каким?' },
+    labels: { context: 'Контекст', task: 'Задача', reqs: 'Требования' },
     replies: {
-      0: 'Конечно! Кому вы хотите написать письмо и о чём?',
-      1: 'Хорошо. А о чём должно быть письмо? И каким тоном его написать?',
-      2: 'Здравствуйте!\n\nПишу вам по поводу… (не знаю, кому именно и каким тоном писать, поэтому получилось общо)\n\nС уважением.',
-      3: 'Здравствуйте, Ирина Петровна!\n\nПрошу предоставить мне отпуск с 10 по 14 марта. Все текущие задачи завершу заранее.\n\nСпасибо!\nС уважением, Аня',
+      0: 'Конечно. Уточните, пожалуйста: кому адресовано письмо, о чём оно и каким должен быть тон?',
+      1: 'Уважаемый клиент!\n\nОбращаемся к вам по вопросу вашего заказа. [Тема письма не указана, поэтому текст получился общим.]\n\nС уважением,\nОтдел продаж',
+      2: 'Уважаемые коллеги из ООО «Вектор»!\n\nСообщаем, что поставка по вашему заказу задерживается на 7 дней. Новый срок: 12 декабря. Приносим извинения за неудобства.\n\nС уважением,\n[Имя]',
+      3: 'Уважаемые коллеги из ООО «Вектор»!\n\nК сожалению, поставка по вашему заказу задерживается на 7 дней из-за задержки у нашего поставщика. Новый срок доставки: 12 декабря. Мы понимаем, что это неудобно, и приносим извинения. В качестве компенсации предлагаем скидку 5% на ваш следующий заказ. Если новый срок вам не подходит, напишите нам, и мы предложим варианты.\n\nС уважением,\n[Имя], менеджер по работе с клиентами',
     },
   },
   en: {
     base: 'Write a letter.',
     parts: {
-      who: 'To my manager, Irina.',
-      what: 'I am asking for leave from 10 to 14 March.',
-      how: 'Short and polite.',
+      context: 'I am a manager at an office furniture supplier.',
+      task: 'To our client Vector Ltd: the delivery is delayed by 7 days because of our supplier; new date 12 December.',
+      reqs: 'Polite, businesslike tone, 5–7 sentences, offer a 5% discount on the next order.',
     },
-    labels: { who: 'Who to?', what: 'About what?', how: 'How?' },
+    labels: { context: 'Context', task: 'Task', reqs: 'Requirements' },
     replies: {
-      0: 'Of course! Who do you want to write to, and what about?',
-      1: 'Sure. What should the letter be about? And what tone should it have?',
-      2: 'Hello,\n\nI am writing regarding… (I do not know exactly who it is for or what tone to use, so it came out vague)\n\nKind regards.',
-      3: 'Dear Irina,\n\nI would like to request leave from 10 to 14 March. I will finish my current tasks beforehand.\n\nThank you!\nKind regards,\nAnya',
+      0: 'Of course. Could you tell me who the letter is for, what it is about and what tone it should have?',
+      1: 'Dear client,\n\nWe are writing to you regarding your order. [No subject was given, so the text is generic.]\n\nKind regards,\nSales team',
+      2: 'Dear colleagues at Vector Ltd,\n\nWe would like to inform you that delivery of your order is delayed by 7 days. The new date is 12 December. We apologise for the inconvenience.\n\nKind regards,\n[Name]',
+      3: 'Dear colleagues at Vector Ltd,\n\nUnfortunately, delivery of your order is delayed by 7 days because of a delay at our supplier. The new delivery date is 12 December. We understand this is inconvenient and apologise. To make up for it, we would like to offer you a 5% discount on your next order. If the new date does not work for you, please let us know and we will suggest alternatives.\n\nKind regards,\n[Name], Account Manager',
     },
   },
 };
+
+/** Ответ зависит от того, какие части добавлены. Без задачи письмо остаётся общим, даже с контекстом. */
+function labLevel(used) {
+  const has = (p) => used.includes(p);
+  if (!has('task')) return used.length === 0 ? 0 : 1;
+  return has('context') && has('reqs') ? 3 : 2;
+}
 
 /** Собрать запрос и учебный ответ по выбранным частям. */
 export function labResult(lang, chosen) {
   const T = LAB_TEXT[lang];
   const used = LAB_PARTS.filter((p) => chosen.includes(p));
   const prompt = [T.base, ...used.map((p) => T.parts[p])].join(' ');
-  return { prompt, reply: T.replies[used.length], score: used.length, max: LAB_PARTS.length };
+  return { prompt, reply: T.replies[labLevel(used)], score: used.length, max: LAB_PARTS.length };
 }

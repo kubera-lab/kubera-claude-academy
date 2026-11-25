@@ -74,9 +74,6 @@ function page(backHref, ...content) {
   if (focusTarget) { focusTarget.setAttribute('tabindex', '-1'); focusTarget.focus({ preventScroll: true }); }
 }
 
-function stars(n) {
-  return h('span', { class: 'stars', 'aria-label': `${n}/3` }, '★'.repeat(n) + '☆'.repeat(3 - n));
-}
 
 // ---------- Главная ----------
 function homeView() {
@@ -95,7 +92,6 @@ function homeView() {
       COURSES.map((c, i) => {
         const inner = [
           h('span', { class: 'num' }, String(i + 1).padStart(2, '0')),
-          h('span', { class: 'icon', 'aria-hidden': 'true' }, c.icon),
           h('strong', {}, c.title[progress.lang]),
           h('span', { class: 'muted' }, c.sub[progress.lang]),
           c.open
@@ -109,6 +105,7 @@ function homeView() {
     ),
   );
 }
+function totalScore(course) { return course.lessons.reduce((n, l) => n + ((progress.scores || {})[l.id] || 0), 0); }
 function countDone(cid) { return COURSE_DATA[cid].lessons.filter((l) => progress.done[l.id]).length; }
 
 // ---------- Список уроков курса ----------
@@ -118,17 +115,21 @@ function courseView(cid) {
   const all = course.lessons.every((l) => progress.done[l.id]);
   const mistakes = progress.mistakes.filter((m) => m.startsWith(cid));
   page('#/',
-    h('h1', {}, h('span', { 'aria-hidden': 'true' }, meta.icon + ' '), meta.title[progress.lang]),
+    h('p', { class: 'eyebrow' }, t().courseN(COURSES.indexOf(meta) + 1)),
+    h('h1', {}, meta.title[progress.lang]),
+    h('p', { class: 'lead' }, meta.sub[progress.lang]),
     all && h('div', { class: 'badge', role: 'status' },
-      h('span', { class: 'badge-icon', 'aria-hidden': 'true' }, course.badge),
-      h('div', {}, h('p', {}, t().badge), h('strong', {}, t().badgeName))),
+      h('span', { class: 'check', 'aria-hidden': 'true' }, '✓'),
+      h('div', {}, h('strong', {}, t().badge), h('p', { class: 'muted' }, t().badgeText(totalScore(course), course.lessons.reduce((n, l) => n + l.key.length, 0))))),
     h('ol', { class: 'lessons' },
       course.lessons.map((l, i) => {
         const open = isUnlocked(progress, course.lessons, l.id);
         const inner = [
-          h('span', { class: 'icon', 'aria-hidden': 'true' }, progress.done[l.id] ? '✅' : open ? l.icon : '🔒'),
-          h('span', { class: 'ltitle' }, `${i + 1}. ${L(l).title}`),
-          h('span', { class: 'muted' }, progress.done[l.id] ? stars(progress.stars[l.id] || 1) : `${l.minutes} ${t().min}`),
+          h('span', { class: 'lnum' + (progress.done[l.id] ? ' done' : ''), 'aria-hidden': 'true' }, progress.done[l.id] ? '✓' : String(i + 1)),
+          h('span', { class: 'ltitle' }, L(l).title),
+          h('span', { class: 'muted small' }, progress.done[l.id]
+            ? t().scoreShort((progress.scores || {})[l.id] ?? 0, l.key.length)
+            : open ? `${l.minutes} ${t().min}` : t().lockedShort),
         ];
         return h('li', {}, open
           ? h('a', { class: 'lesson', href: `#/${cid}/${l.id}` }, inner)
@@ -154,35 +155,48 @@ function lessonView(cid, lid) {
     const bar = h('ol', { class: 'steps', 'aria-label': 'progress' },
       t().steps.map((s, i) => h('li', { class: i < step ? 'done' : i === step ? 'now' : '', 'aria-current': i === step ? 'step' : null }, s)));
     let body;
-    if (step === 0) body = storyStep(T, () => { step = 1; draw(); });
-    else if (step === 1) body = ideaStep(T, () => { step = 2; draw(); });
-    else if (step === 2) body = tryStep(T, lesson, () => { step = 3; draw(); });
-    else if (step === 3) body = quizStep(lesson, qi, (wasFirstTryRight) => {
+    const go = (n) => () => { step = n; draw(); };
+    if (step === 0) body = situationStep(T, go(1));
+    else if (step === 1) body = pointsStep(T, go(2));
+    else if (step === 2) body = compareStep(T, go(3));
+    else if (step === 3) body = tryStep(T, lesson, go(4));
+    else if (step === 4) body = quizStep(lesson, qi, (wasFirstTryRight) => {
       if (wasFirstTryRight) firstTry++;
       qi++;
-      if (qi >= T.quiz.length) { progress = finishLesson(progress, lid, firstTry, T.quiz.length); save(); step = 4; }
+      if (qi >= T.quiz.length) { progress = finishLesson(progress, lid, firstTry, T.quiz.length); save(); step = 5; }
       draw();
     });
     else body = resultStep(cid, course, lesson, firstTry, T.quiz.length);
-    page(`#/${cid}`, h('p', { class: 'kicker' }, `${course.lessons.indexOf(lesson) + 1}. ${T.title}`), bar, body);
+    page(`#/${cid}`, h('p', { class: 'kicker' }, `${t().lessonN(course.lessons.indexOf(lesson) + 1)} · ${T.title}`), bar, body);
   };
   draw();
 }
 
-function storyStep(T, next) {
+function nextBtn(next) { return h('button', { class: 'btn primary big', type: 'button', onclick: next }, t().next); }
+
+function situationStep(T, next) {
   return h('section', {},
-    h('h1', {}, t().story),
-    h('div', { class: 'comic' }, T.story.map(([who, text]) =>
-      h('div', { class: 'panel' }, h('span', { class: 'face', 'aria-hidden': 'true' }, who), h('p', {}, text)))),
-    h('button', { class: 'btn primary big', type: 'button', onclick: next }, t().next));
+    h('h1', {}, T.title),
+    h('div', { class: 'card situation' }, h('p', { class: 'eyebrow' }, t().situation), h('p', {}, T.situation)),
+    nextBtn(next));
 }
 
-function ideaStep(T, next) {
+function pointsStep(T, next) {
   return h('section', {},
-    h('h1', {}, t().idea),
-    h('p', { class: 'idea' }, T.idea),
-    h('div', { class: 'example' }, h('h2', {}, '💡 ' + t().example), h('p', {}, T.example)),
-    h('button', { class: 'btn primary big', type: 'button', onclick: next }, t().next));
+    h('h1', {}, t().points),
+    h('ol', { class: 'points' }, T.points.map(([term, text]) => h('li', {}, h('strong', {}, term), h('p', {}, text)))),
+    nextBtn(next));
+}
+
+function compareStep(T, next) {
+  const c = T.compare;
+  return h('section', {},
+    h('h1', {}, t().compare),
+    h('div', { class: 'cmp' },
+      h('div', { class: 'cmp-bad' }, h('p', { class: 'eyebrow' }, t().weak), h('p', { class: 'mono-q' }, c.bad)),
+      h('div', { class: 'cmp-good' }, h('p', { class: 'eyebrow' }, t().strong), h('p', { class: 'mono-q' }, c.good))),
+    h('div', { class: 'note' }, h('strong', {}, t().why + ' '), c.why),
+    nextBtn(next));
 }
 
 function tryStep(T, lesson, next) {
@@ -203,7 +217,7 @@ function tryStep(T, lesson, next) {
     h('p', {}, T.practice),
     promptBox,
     copyBtn,
-    h('button', { class: 'btn primary big', type: 'button', onclick: next }, t().next));
+    nextBtn(next));
 }
 
 function promptLab() {
@@ -235,8 +249,8 @@ function promptLab() {
   });
   update();
   return h('div', { class: 'lab' },
-    h('h2', {}, '🧪 ' + t().lab),
-    h('p', { class: 'honest' }, '⚠️ ' + t().labHonest),
+    h('h2', {}, t().lab),
+    h('p', { class: 'honest' }, t().labHonest),
     h('p', {}, t().labHint),
     h('div', { class: 'chips' }, chips),
     out);
@@ -261,12 +275,12 @@ function quizStep(lesson, qi, onDone, extraTitle) {
       if (!r.ok) {
         progress = recordAnswer(progress, qid, false);
         e.currentTarget.classList.add('bad'); e.currentTarget.disabled = true;
-        fb.replaceChildren(h('p', { class: 'bad-t' }, '❌ ' + t().wrong + ' ', r.why));
+        fb.replaceChildren(h('p', { class: 'bad-t' }, h('strong', {}, t().wrong + ' '), r.why));
       } else {
         if (tries === 1) progress = recordAnswer(progress, qid, true);
         e.currentTarget.classList.add('good');
         opts.forEach((o) => { o.disabled = true; });
-        fb.replaceChildren(h('p', { class: 'good-t' }, '✅ ' + t().right + ' ', r.why));
+        fb.replaceChildren(h('p', { class: 'good-t' }, h('strong', {}, t().right + ' '), r.why.replace(/^(Верно|Correct)[.!]\s*/, '')));
         nextBtn.hidden = false; nextBtn.focus();
       }
       save();
@@ -282,11 +296,11 @@ function quizStep(lesson, qi, onDone, extraTitle) {
 function resultStep(cid, course, lesson, firstTry, total) {
   const i = course.lessons.indexOf(lesson);
   const nxt = course.lessons[i + 1];
-  return h('section', { class: 'result' },
-    h('p', { class: 'big-emoji', 'aria-hidden': 'true' }, '🎉'),
-    h('h1', {}, t().done),
-    stars(progress.stars[lesson.id] || 1),
-    h('p', {}, t().doneText(firstTry, total)),
+  return h('section', {},
+    h('p', { class: 'eyebrow' }, t().done),
+    h('h1', {}, t().takeaways),
+    h('ul', { class: 'takeaways' }, L(lesson).takeaways.map((x) => h('li', {}, x))),
+    h('p', { class: 'score' }, t().doneText(firstTry, total)),
     nxt
       ? h('a', { class: 'btn primary big', href: `#/${cid}/${nxt.id}` }, t().nextLesson)
       : h('a', { class: 'btn primary big', href: `#/${cid}` }, t().toCourse),
