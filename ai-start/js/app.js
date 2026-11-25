@@ -42,15 +42,15 @@ function h(tag, attrs = {}, ...kids) {
 }
 
 function header(backHref) {
-  return h('header', { class: 'top' },
+  return h('header', { class: 'top' }, h('div', { class: 'topin' },
     backHref
       ? h('a', { class: 'btn ghost', href: backHref }, t().back)
-      : h('a', { class: 'logo', href: '#/' }, h('span', { 'aria-hidden': 'true' }, '✨'), ' KUBERA AI START'),
+      : h('a', { class: 'brand', href: '#/' }, h('span', { class: 'mark', 'aria-hidden': 'true' }, '✦'), 'KUBERA AI START'),
     h('button', {
       class: 'btn ghost', type: 'button', 'aria-label': t().langName, lang: progress.lang === 'ru' ? 'en' : 'ru',
       onclick: () => { progress.lang = progress.lang === 'ru' ? 'en' : 'ru'; save(); render(); },
     }, t().lang),
-  );
+  ));
 }
 
 function footer() {
@@ -62,12 +62,13 @@ function footer() {
       const lang = progress.lang; progress = { ...emptyProgress(), lang }; save(); location.hash = '#/'; render();
     },
   }, t().reset);
-  return h('footer', { class: 'foot' }, h('p', {}, t().privacy), resetBtn, h('p', { class: 'muted' }, t().footer));
+  return h('footer', { class: 'foot' }, h('p', {}, t().privacy), resetBtn, h('p', {}, t().footer),
+    h('p', {}, h('a', { href: '../' }, t().academy)));
 }
 
 function page(backHref, ...content) {
   document.documentElement.lang = progress.lang;
-  app.replaceChildren(header(backHref), h('main', { id: 'main' }, ...content), footer());
+  app.replaceChildren(header(backHref), h('main', { id: 'main', class: 'wrap' }, ...content), footer());
   window.scrollTo(0, 0);
   const focusTarget = app.querySelector('h1');
   if (focusTarget) { focusTarget.setAttribute('tabindex', '-1'); focusTarget.focus({ preventScroll: true }); }
@@ -84,6 +85,7 @@ function homeView() {
   const target = nextLesson(progress, lessons);
   page(null,
     h('section', { class: 'hero' },
+      h('p', { class: 'eyebrow' }, t().eyebrow),
       h('h1', {}, t().tagline),
       h('p', { class: 'lead' }, t().heroText),
       h('a', { class: 'btn primary big', href: `#/c1/${target}` }, anyDone ? t().cont : t().start),

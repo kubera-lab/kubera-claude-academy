@@ -1,6 +1,8 @@
 // Надписи интерфейса.
 export const UI = {
   ru: {
+    eyebrow: 'Бесплатная школа ИИ · без кода',
+    academy: 'Для профи: KUBERA Claude Academy →',
     tagline: 'Искусственный интеллект для каждого',
     heroText: 'Короткие уроки по 5 минут. Без программирования, без регистрации, бесплатно.',
     start: 'Начать первый урок',
@@ -50,6 +52,8 @@ export const UI = {
     footer: 'KUBERA AI START — бесплатная школа ИИ. Код по лицензии MIT, тексты уроков по лицензии CC BY 4.0.',
   },
   en: {
+    eyebrow: 'Free AI school · no code',
+    academy: 'For pros: KUBERA Claude Academy →',
     tagline: 'Artificial intelligence for everyone',
     heroText: 'Short 5-minute lessons. No coding, no sign-up, free.',
     start: 'Start the first lesson',

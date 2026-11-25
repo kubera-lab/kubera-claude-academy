@@ -1,153 +1,147 @@
-/* Тёплая, спокойная тема. Крупный текст и кнопки. Светлая и тёмная схема. */
+/* Тот же дизайн, что у KUBERA Claude Academy: тёмная тема, синий и фиолетовый акцент, колонка 860px.
+   Для новичков текст и кнопки немного крупнее. */
 :root {
-  --bg: #fff7ed;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #5b6472;
-  --line: #ead9c6;
-  --accent: #c2410c;
-  --accent-text: #ffffff;
-  --soft: #ffedd5;
-  --good: #166534;
-  --good-bg: #dcfce7;
-  --bad: #991b1b;
-  --bad-bg: #fee2e2;
-  --radius: 16px;
-  color-scheme: light;
+  --bg: #0e1422;
+  --panel: #151d2e;
+  --panel-2: #1b2539;
+  --line: #2a3650;
+  --ink: #edf1f8;
+  --muted: #a3afc4;
+  --accent: #7b9cff;
+  --violet: #a68bff;
+  --good: #57c98a;
+  --good-bg: #13301f;
+  --bad: #ff8a7a;
+  --bad-bg: #3a1c19;
+  --warn: #f2c063;
+  --body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1c1917;
-    --card: #292524;
-    --text: #f5f5f4;
-    --muted: #c5bfb8;
-    --line: #44403c;
-    --accent: #fb923c;
-    --accent-text: #1c1917;
-    --soft: #3a2a1f;
-    --good: #86efac;
-    --good-bg: #14532d;
-    --bad: #fca5a5;
-    --bad-bg: #7f1d1d;
-    color-scheme: dark;
-  }
-}
-
 * { box-sizing: border-box; }
+html, body { margin: 0; }
 html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 19px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
-#app { max-width: 760px; margin: 0 auto; padding: 0 16px 40px; }
-h1 { font-size: 1.6rem; line-height: 1.25; margin: 0.6em 0 0.5em; }
-h2 { font-size: 1.2rem; margin: 1.4em 0 0.6em; }
+body { background: var(--bg); color: var(--ink); font: 17px/1.6 var(--body); }
 a { color: var(--accent); }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+h1, h2 { line-height: 1.2; text-wrap: balance; }
+h1 { font-size: clamp(26px, 5vw, 38px); margin: 8px 0 14px; }
+h2 { font-size: 20px; margin: 28px 0 12px; }
+p { max-width: 70ch; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 3px solid var(--warn); outline-offset: 2px; border-radius: 6px; }
 h1:focus { outline: none; }
-
-.skip { position: absolute; left: -9999px; }
-.skip:focus { left: 16px; top: 8px; background: var(--card); padding: 8px 12px; z-index: 10; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: #000; padding: 8px 12px; border-radius: 6px; z-index: 50; }
+.skip:focus { left: 8px; }
 
-.top { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; gap: 8px; }
-.logo { font-weight: 800; text-decoration: none; color: var(--text); font-size: 1.05rem; }
+/* Верхняя панель как в академии */
+.top { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.topin { max-width: 1060px; margin: 0 auto; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; gap: 10px; align-items: center; color: var(--ink); text-decoration: none; font: 700 16px var(--body); }
+.mark { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--violet)); color: #0b1020; font-size: 15px; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 20px 18px 56px; }
 
+/* Кнопки */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 52px; padding: 10px 20px; margin: 8px 8px 0 0;
-  border: 2px solid var(--accent); border-radius: 999px;
-  background: var(--card); color: var(--accent);
-  font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+  min-height: 48px; padding: 10px 18px; margin: 8px 8px 0 0;
+  font: 600 16px var(--body); border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); text-decoration: none;
 }
-.btn.primary { background: var(--accent); color: var(--accent-text); }
-.btn.big { width: 100%; margin: 20px 0 0; font-size: 1.1rem; }
-.btn.ghost { border-color: transparent; background: transparent; min-height: 48px; padding: 8px 12px; margin: 0; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #0b1020; }
+.btn.big { width: 100%; margin: 22px 0 0; min-height: 54px; font-size: 17px; }
+.btn.ghost { background: transparent; border-color: transparent; margin: 0; min-height: 44px; padding: 8px 12px; color: var(--muted); }
+.btn.ghost:hover { color: var(--ink); background: var(--panel-2); }
 .link { background: none; border: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; padding: 8px 0; min-height: 44px; }
-.muted { color: var(--muted); }
 
-.hero { background: var(--soft); border-radius: var(--radius); padding: 20px; margin-top: 4px; }
-.hero h1 { margin-top: 0.2em; }
-.lead { font-size: 1.1rem; }
+.eyebrow { font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0; }
+.lead { font-size: 18px; color: var(--muted); }
+.hero { padding: 20px 0 4px; }
 
-.grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+/* Курсы на главной */
+.grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
 .card {
-  display: grid; gap: 4px; height: 100%; padding: 16px; border-radius: var(--radius);
-  background: var(--card); border: 2px solid var(--line); color: var(--text); text-decoration: none;
+  display: grid; gap: 4px; height: 100%; padding: 18px; border-radius: 12px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none;
 }
 a.card:hover { border-color: var(--accent); }
-.card.off { opacity: 0.6; }
-.card .num { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
-.card .icon { font-size: 1.8rem; }
-.pill { justify-self: start; margin-top: 6px; padding: 2px 12px; border-radius: 999px; background: var(--soft); font-size: 0.9rem; font-weight: 700; }
-.pill.soon { background: transparent; border: 1px dashed var(--muted); color: var(--muted); }
+.card.off { opacity: 0.55; }
+.card .num { font: 600 12px var(--mono); color: var(--accent); letter-spacing: .08em; }
+.card .icon { font-size: 1.7rem; }
+.pill { justify-self: start; margin-top: 6px; display: inline-block; font: 600 12px var(--mono); padding: 3px 10px; border-radius: 99px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); }
+.pill.soon { background: transparent; border-style: dashed; }
 
+/* Список уроков */
 .lessons { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 10px; }
 .lesson {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
-  min-height: 64px; padding: 12px 16px; border-radius: var(--radius);
-  background: var(--card); border: 2px solid var(--line); color: var(--text); text-decoration: none;
+  min-height: 64px; padding: 12px 16px; border-radius: 12px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none;
 }
 a.lesson:hover { border-color: var(--accent); }
-.lesson.off { opacity: 0.55; }
-.lesson .icon { font-size: 1.5rem; }
-.ltitle { font-weight: 700; }
-.stars { color: #d97706; letter-spacing: 2px; font-size: 1.2rem; }
+.lesson.off { opacity: 0.5; }
+.lesson .icon { font-size: 1.4rem; }
+.ltitle { font-weight: 600; }
+.stars { color: var(--warn); letter-spacing: 2px; font-size: 1.15rem; }
 
-.badge { display: flex; gap: 16px; align-items: center; background: var(--soft); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+.badge { display: flex; gap: 16px; align-items: center; background: var(--good-bg); border: 1px solid var(--good); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
 .badge p { margin: 0; }
-.badge-icon { font-size: 3rem; }
+.badge-icon { font-size: 2.8rem; }
 
-.kicker { margin: 0; color: var(--muted); font-weight: 700; }
-.steps { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; font-size: 0.75rem; text-align: center; color: var(--muted); }
-.steps li { border-top: 6px solid var(--line); padding-top: 4px; }
-.steps li.done { border-color: var(--accent); }
-.steps li.now { border-color: var(--accent); color: var(--text); font-weight: 700; }
+/* Урок по шагам */
+.kicker { margin: 0; color: var(--muted); font-weight: 600; }
+.steps { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; font-size: 12px; text-align: center; color: var(--muted); }
+.steps li { border-top: 3px solid var(--line); padding-top: 5px; }
+.steps li.done { border-image: linear-gradient(90deg, var(--accent), var(--violet)) 1; }
+.steps li.now { border-image: linear-gradient(90deg, var(--accent), var(--violet)) 1; color: var(--ink); font-weight: 700; }
 
 .comic { display: grid; gap: 12px; }
-.panel { display: flex; gap: 12px; align-items: flex-start; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; }
-.panel .face { font-size: 2.2rem; line-height: 1; }
+.panel { display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.panel .face { font-size: 2.1rem; line-height: 1; }
 .panel p { margin: 0; }
-.idea { font-size: 1.15rem; background: var(--card); border-left: 6px solid var(--accent); padding: 14px 16px; border-radius: 8px; }
-.example { background: var(--soft); border-radius: var(--radius); padding: 4px 16px 12px; }
-.example h2 { margin-top: 0.8em; }
+.idea { font-size: 18px; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 16px 18px; border-radius: 12px; }
+.example { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 2px 18px 12px; margin: 14px 0; }
+.example h2 { margin-top: 14px; font-size: 17px; }
 
-.prompt { margin: 12px 0; padding: 14px 16px; background: var(--card); border: 2px dashed var(--accent); border-radius: var(--radius); font-style: italic; }
+.prompt { margin: 14px 0; padding: 14px 16px; background: var(--panel-2); border: 1px dashed var(--accent); border-radius: 10px; font-family: var(--mono); font-size: 15px; }
 
-.q { font-size: 1.35rem; }
+/* Тест */
+.q { font-size: clamp(21px, 4vw, 26px); }
 .opts { display: grid; gap: 10px; }
 .opt {
-  text-align: left; min-height: 56px; padding: 12px 16px; border-radius: 14px;
-  border: 2px solid var(--line); background: var(--card); color: var(--text); font: inherit; cursor: pointer;
+  text-align: left; min-height: 54px; padding: 12px 16px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 16px/1.5 var(--body); cursor: pointer;
 }
 .opt:hover:not(:disabled) { border-color: var(--accent); }
 .opt:disabled { cursor: default; }
-.opt.good { border-color: var(--good); background: var(--good-bg); color: var(--text); }
-.opt.bad { border-color: var(--bad); background: var(--bad-bg); color: var(--text); opacity: 0.85; }
-.feedback p { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; }
+.opt.good { border-color: var(--good); background: var(--good-bg); }
+.opt.bad { border-color: var(--bad); background: var(--bad-bg); }
+.feedback p { margin: 14px 0 0; padding: 12px 14px; border-radius: 8px; }
 .good-t { background: var(--good-bg); }
 .bad-t { background: var(--bad-bg); }
 
 .result { text-align: center; }
-.big-emoji { font-size: 3.5rem; margin: 10px 0 0; }
+.result p { margin-left: auto; margin-right: auto; }
+.big-emoji { font-size: 3.4rem; margin: 10px 0 0; }
 .result .stars { font-size: 2rem; }
 
-.lab { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 4px 16px 16px; margin-bottom: 16px; }
-.honest { background: var(--soft); border-radius: 10px; padding: 8px 12px; font-size: 0.92rem; }
+/* Лаборатория запросов */
+.lab { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--violet); border-radius: 12px; padding: 4px 18px 18px; margin-bottom: 16px; }
+.honest { border-left: 3px solid var(--warn); background: var(--panel-2); border-radius: 6px; padding: 8px 12px; font-size: 15px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { min-height: 48px; padding: 8px 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font: inherit; font-size: 0.95rem; cursor: pointer; text-align: left; }
-.chip[aria-pressed="true"] { border-color: var(--accent); background: var(--soft); }
+.chip { min-height: 46px; padding: 8px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); font: 15px var(--body); cursor: pointer; text-align: left; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: #22305a; }
 .chip[aria-pressed="true"]::before { content: "✓ "; font-weight: 800; color: var(--accent); }
-.bubble { white-space: pre-line; padding: 10px 14px; border-radius: 14px; margin: 4px 0 10px; }
-.bubble.me { background: var(--soft); }
-.bubble.ai { background: var(--bg); border: 1px solid var(--line); }
-.lab-out .muted { margin: 10px 0 0; font-size: 0.9rem; }
-.meter { height: 12px; background: var(--line); border-radius: 999px; overflow: hidden; }
-.meter span { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+.bubble { white-space: pre-line; padding: 10px 14px; border-radius: 10px; margin: 4px 0 10px; }
+.bubble.me { background: #22305a; }
+.bubble.ai { background: var(--panel-2); border: 1px solid var(--line); }
+.lab-out .muted { margin: 10px 0 0; font-size: 14px; }
+.meter { height: 6px; background: var(--line); border-radius: 9px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--violet)); transition: width .3s; }
 
-.foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.9rem; }
-.foot p { margin: 6px 0; }
+footer.foot { text-align: center; color: var(--muted); font-size: 14px; padding: 24px 18px; border-top: 1px solid var(--line); }
+.foot p { margin: 6px auto; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
