@@ -1,0 +1,147 @@
+/* Тот же дизайн, что у KUBERA Claude Academy: тёмная тема, синий и фиолетовый акцент, колонка 860px.
+   Для новичков текст и кнопки немного крупнее. */
+:root {
+  --bg: #0e1422;
+  --panel: #151d2e;
+  --panel-2: #1b2539;
+  --line: #2a3650;
+  --ink: #edf1f8;
+  --muted: #a3afc4;
+  --accent: #7b9cff;
+  --violet: #a68bff;
+  --good: #57c98a;
+  --good-bg: #13301f;
+  --bad: #ff8a7a;
+  --bad-bg: #3a1c19;
+  --warn: #f2c063;
+  --body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--ink); font: 17px/1.6 var(--body); }
+a { color: var(--accent); }
+h1, h2 { line-height: 1.2; text-wrap: balance; }
+h1 { font-size: clamp(26px, 5vw, 38px); margin: 8px 0 14px; }
+h2 { font-size: 20px; margin: 28px 0 12px; }
+p { max-width: 70ch; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 3px solid var(--warn); outline-offset: 2px; border-radius: 6px; }
+h1:focus { outline: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: #000; padding: 8px 12px; border-radius: 6px; z-index: 50; }
+.skip:focus { left: 8px; }
+
+/* Верхняя панель как в академии */
+.top { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.topin { max-width: 1060px; margin: 0 auto; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; gap: 10px; align-items: center; color: var(--ink); text-decoration: none; font: 700 16px var(--body); }
+.mark { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--violet)); color: #0b1020; font-size: 15px; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 20px 18px 56px; }
+
+/* Кнопки */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 10px 18px; margin: 8px 8px 0 0;
+  font: 600 16px var(--body); border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); text-decoration: none;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #0b1020; }
+.btn.big { width: 100%; margin: 22px 0 0; min-height: 54px; font-size: 17px; }
+.btn.ghost { background: transparent; border-color: transparent; margin: 0; min-height: 44px; padding: 8px 12px; color: var(--muted); }
+.btn.ghost:hover { color: var(--ink); background: var(--panel-2); }
+.link { background: none; border: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; padding: 8px 0; min-height: 44px; }
+
+.eyebrow { font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0; }
+.lead { font-size: 18px; color: var(--muted); }
+.hero { padding: 20px 0 4px; }
+
+/* Курсы на главной */
+.grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.card {
+  display: grid; gap: 4px; height: 100%; padding: 18px; border-radius: 12px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+}
+a.card:hover { border-color: var(--accent); }
+.card.off { opacity: 0.55; }
+.card .num { font: 600 12px var(--mono); color: var(--accent); letter-spacing: .08em; }
+.card .icon { font-size: 1.7rem; }
+.pill { justify-self: start; margin-top: 6px; display: inline-block; font: 600 12px var(--mono); padding: 3px 10px; border-radius: 99px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); }
+.pill.soon { background: transparent; border-style: dashed; }
+
+/* Список уроков */
+.lessons { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 10px; }
+.lesson {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
+  min-height: 64px; padding: 12px 16px; border-radius: 12px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+}
+a.lesson:hover { border-color: var(--accent); }
+.lesson.off { opacity: 0.5; }
+.lesson .icon { font-size: 1.4rem; }
+.ltitle { font-weight: 600; }
+.stars { color: var(--warn); letter-spacing: 2px; font-size: 1.15rem; }
+
+.badge { display: flex; gap: 16px; align-items: center; background: var(--good-bg); border: 1px solid var(--good); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+.badge p { margin: 0; }
+.badge-icon { font-size: 2.8rem; }
+
+/* Урок по шагам */
+.kicker { margin: 0; color: var(--muted); font-weight: 600; }
+.steps { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; font-size: 12px; text-align: center; color: var(--muted); }
+.steps li { border-top: 3px solid var(--line); padding-top: 5px; }
+.steps li.done { border-image: linear-gradient(90deg, var(--accent), var(--violet)) 1; }
+.steps li.now { border-image: linear-gradient(90deg, var(--accent), var(--violet)) 1; color: var(--ink); font-weight: 700; }
+
+.comic { display: grid; gap: 12px; }
+.panel { display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.panel .face { font-size: 2.1rem; line-height: 1; }
+.panel p { margin: 0; }
+.idea { font-size: 18px; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 16px 18px; border-radius: 12px; }
+.example { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 2px 18px 12px; margin: 14px 0; }
+.example h2 { margin-top: 14px; font-size: 17px; }
+
+.prompt { margin: 14px 0; padding: 14px 16px; background: var(--panel-2); border: 1px dashed var(--accent); border-radius: 10px; font-family: var(--mono); font-size: 15px; }
+
+/* Тест */
+.q { font-size: clamp(21px, 4vw, 26px); }
+.opts { display: grid; gap: 10px; }
+.opt {
+  text-align: left; min-height: 54px; padding: 12px 16px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 16px/1.5 var(--body); cursor: pointer;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt.good { border-color: var(--good); background: var(--good-bg); }
+.opt.bad { border-color: var(--bad); background: var(--bad-bg); }
+.feedback p { margin: 14px 0 0; padding: 12px 14px; border-radius: 8px; }
+.good-t { background: var(--good-bg); }
+.bad-t { background: var(--bad-bg); }
+
+.result { text-align: center; }
+.result p { margin-left: auto; margin-right: auto; }
+.big-emoji { font-size: 3.4rem; margin: 10px 0 0; }
+.result .stars { font-size: 2rem; }
+
+/* Лаборатория запросов */
+.lab { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--violet); border-radius: 12px; padding: 4px 18px 18px; margin-bottom: 16px; }
+.honest { border-left: 3px solid var(--warn); background: var(--panel-2); border-radius: 6px; padding: 8px 12px; font-size: 15px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 46px; padding: 8px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); font: 15px var(--body); cursor: pointer; text-align: left; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: #22305a; }
+.chip[aria-pressed="true"]::before { content: "✓ "; font-weight: 800; color: var(--accent); }
+.bubble { white-space: pre-line; padding: 10px 14px; border-radius: 10px; margin: 4px 0 10px; }
+.bubble.me { background: #22305a; }
+.bubble.ai { background: var(--panel-2); border: 1px solid var(--line); }
+.lab-out .muted { margin: 10px 0 0; font-size: 14px; }
+.meter { height: 6px; background: var(--line); border-radius: 9px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--violet)); transition: width .3s; }
+
+footer.foot { text-align: center; color: var(--muted); font-size: 14px; padding: 24px 18px; border-top: 1px solid var(--line); }
+.foot p { margin: 6px auto; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
