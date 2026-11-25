@@ -2,7 +2,9 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6) ![React](https://img.shields.io/badge/React-18-61dafb) ![Tests](https://img.shields.io/badge/tests-98%20unit%20%C2%B7%20221%20e2e-2ea44f) ![Hosting](https://img.shields.io/badge/Cloudflare%20Pages-free%20plan-f38020) ![Paid APIs](https://img.shields.io/badge/paid%20AI%20API-not%20required-555)
 
-**Live site (free, no sign-up):** https://kubera-lab.github.io/kubera-claude-academy/
+**Live site (free, no sign-up):** https://kubera-claude-academy.pages.dev
+
+Mirror: https://kubera-lab.github.io/kubera-claude-academy/
 
 **Licence:** [MIT](LICENSE) — free to use, copy and adapt.
 
@@ -27,7 +29,7 @@ KUBERA runs two separate learning platforms. They are developed independently an
 | | KUBERA Claude Academy (this repository) | KUBERA Gemini Academy |
 |---|---|---|
 | Repository | `kubera-lab/kubera-claude-academy` | `kubera-lab/kubera-ai-academy` |
-| Site | kubera-lab.github.io/kubera-claude-academy | not published yet |
+| Site | kubera-claude-academy.pages.dev | not published yet |
 | Built with | Claude | Gemini |
 | Focus | Hands-on tools and honest, fixed-rule checks; portfolio evidence | UI/UX and its own course set |
 
