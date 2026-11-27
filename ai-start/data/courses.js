@@ -25,3 +25,11 @@ export const COURSES = [
     title: { ru: 'Личный ИИ-ассистент', en: 'Your own AI assistant' },
     sub: { ru: 'Постоянные инструкции под ваши задачи', en: 'Standing instructions for your tasks' } },
 ];
+
+// «Лаборатория KUBERA»: отдельный раздел. Технологии на примере собственных проектов KUBERA (RIDGE и другие).
+// Программа раздела: docs/KUBERA-LAB.md.
+export const LAB_COURSES = [
+  { id: 'k1', icon: '🧪', open: true,
+    title: { ru: 'Технологии RIDGE', en: 'RIDGE technologies' },
+    sub: { ru: 'Проверка цифр, документы, безопасность, GitHub и облако на примере RIDGE', en: 'Number checks, documents, security, GitHub and the cloud, using RIDGE as the example' } },
+];

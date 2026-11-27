@@ -22,6 +22,10 @@ export function validateLesson(lesson) {
     else L.points.forEach((pt, i) => { if (!pt[0] || !pt[1]) errors.push(`${lesson.id}/${lang}: пустой тезис ${i}`); });
     if (!L.compare || !L.compare.bad || !L.compare.good || !L.compare.why) errors.push(`${lesson.id}/${lang}: нет разбора`);
     if (!Array.isArray(L.takeaways) || L.takeaways.length < 2) errors.push(`${lesson.id}/${lang}: нет итогов`);
+    if (L.terms !== undefined) {
+      if (!Array.isArray(L.terms) || L.terms.length < 3) errors.push(`${lesson.id}/${lang}: мало терминов`);
+      else L.terms.forEach((tm, i) => { if (!Array.isArray(tm) || tm.length !== 3 || tm.some((x) => !x)) errors.push(`${lesson.id}/${lang}: термин ${i} неполный (нужны термин, перевод, произношение)`); });
+    }
     if (!Array.isArray(L.quiz) || L.quiz.length !== lesson.key.length) {
       errors.push(`${lesson.id}/${lang}: число вопросов не совпадает с ключом`);
       continue;

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8080",
-    "test": "node --test tests/logic.test.mjs",
+    "test": "node --test tests/logic.test.mjs tests/lab.test.mjs",
     "e2e": "node tests/e2e.mjs"
   },
   "license": "MIT"
