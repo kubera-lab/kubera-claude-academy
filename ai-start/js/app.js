@@ -1,13 +1,16 @@
 // Интерфейс школы: главная, список уроков, урок по шагам, повтор ошибок.
-import { COURSES } from '../data/courses.js';
+import { COURSES, LAB_COURSES } from '../data/courses.js';
 import { COURSE1 } from '../data/course1.js';
+import { LAB1 } from '../data/lab1.js';
+import { LAB2 } from '../data/lab2.js';
 import { UI } from './i18n.js';
 import {
   STORE_KEY, parseProgress, emptyProgress, recordAnswer, finishLesson,
   nextLesson, isUnlocked, checkAnswer, labResult, LAB_PARTS, LAB_TEXT,
 } from './logic.js';
 
-const COURSE_DATA = { c1: COURSE1 };
+const COURSE_DATA = { c1: COURSE1, k1: LAB1, k2: LAB2 };
+const ALL_META = [...COURSES, ...LAB_COURSES];
 const app = document.getElementById('app');
 
 // ---------- Прогресс в браузере (может быть недоступен, тогда работаем без сохранения) ----------
@@ -103,6 +106,15 @@ function homeView() {
           : h('div', { class: 'card off', 'aria-disabled': 'true' }, inner));
       }),
     ),
+    h('h2', {}, t().labSection),
+    h('p', { class: 'muted' }, t().labSectionText),
+    h('ol', { class: 'labgrid' },
+      LAB_COURSES.map((c) => h('li', {}, h('a', { class: 'card', href: `#/${c.id}` },
+        h('span', { class: 'icon', 'aria-hidden': 'true' }, c.icon),
+        h('strong', {}, c.title[progress.lang]),
+        h('span', { class: 'muted' }, c.sub[progress.lang]),
+        h('span', { class: 'pill' }, `${countDone(c.id)}/${COURSE_DATA[c.id].lessons.length}`)))),
+    ),
   );
 }
 function totalScore(course) { return course.lessons.reduce((n, l) => n + ((progress.scores || {})[l.id] || 0), 0); }
@@ -111,11 +123,12 @@ function countDone(cid) { return COURSE_DATA[cid].lessons.filter((l) => progress
 // ---------- Список уроков курса ----------
 function courseView(cid) {
   const course = COURSE_DATA[cid];
-  const meta = COURSES.find((c) => c.id === cid);
+  const meta = ALL_META.find((c) => c.id === cid);
+  const isLab = LAB_COURSES.includes(meta);
   const all = course.lessons.every((l) => progress.done[l.id]);
   const mistakes = progress.mistakes.filter((m) => m.startsWith(cid));
   page('#/',
-    h('p', { class: 'eyebrow' }, t().courseN(COURSES.indexOf(meta) + 1)),
+    h('p', { class: 'eyebrow' }, isLab ? t().labSection : t().courseN(COURSES.indexOf(meta) + 1)),
     h('h1', {}, meta.title[progress.lang]),
     h('p', { class: 'lead' }, meta.sub[progress.lang]),
     all && h('div', { class: 'badge', role: 'status' },
@@ -137,7 +150,34 @@ function courseView(cid) {
       }),
     ),
     mistakes.length > 0 && h('a', { class: 'btn', href: `#/${cid}/review` }, t().review(mistakes.length)),
+    isLab && learnedView(course),
   );
+}
+
+/** Результат обучения: пройденные направления и словарь терминов из пройденных уроков. */
+function learnedView(course) {
+  const done = course.lessons.filter((l) => progress.done[l.id]);
+  return h('section', { class: 'learned' },
+    h('h2', {}, t().learned),
+    done.length === 0
+      ? h('p', { class: 'muted' }, t().learnedEmpty)
+      : [
+          h('table', { class: 'terms journal' },
+            h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t().jDate), h('th', { scope: 'col' }, t().jArea), h('th', { scope: 'col' }, t().jLesson), h('th', { scope: 'col' }, t().jScore))),
+            h('tbody', {}, done.map((l) => h('tr', {},
+              h('td', {}, (progress.when || {})[l.id] || '—'),
+              h('td', { lang: 'en' }, h('strong', {}, l.area)),
+              h('td', {}, L(l).title),
+              h('td', {}, `${(progress.scores || {})[l.id] ?? 0}/${l.key.length}`))))),
+          h('h3', {}, t().glossary(done.reduce((n, l) => n + L(l).terms.length, 0))),
+          termsTable(done.flatMap((l) => L(l).terms)),
+        ]);
+}
+
+function termsTable(terms) {
+  return h('table', { class: 'terms' },
+    h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t().termEn), h('th', { scope: 'col' }, t().termMeaning), h('th', { scope: 'col' }, t().termSay))),
+    h('tbody', {}, terms.map(([en, meaning, say]) => h('tr', {}, h('td', { lang: 'en' }, h('strong', {}, en)), h('td', {}, meaning), h('td', {}, say)))));
 }
 
 // ---------- Урок по шагам ----------
@@ -151,19 +191,24 @@ function lessonView(cid, lid) {
   let qi = 0;
   let firstTry = 0;
 
+  // Шаги урока. В уроках «Лаборатории KUBERA» после «Сути» есть шаг «Термины».
+  const kinds = T.terms ? ['situation', 'points', 'terms', 'compare', 'try', 'quiz'] : ['situation', 'points', 'compare', 'try', 'quiz'];
+  const labels = T.terms ? t().stepsLab : t().steps;
   const draw = () => {
-    const bar = h('ol', { class: 'steps', 'aria-label': 'progress' },
-      t().steps.map((s, i) => h('li', { class: i < step ? 'done' : i === step ? 'now' : '', 'aria-current': i === step ? 'step' : null }, s)));
+    const bar = h('ol', { class: 'steps', 'aria-label': 'progress', style: `grid-template-columns:repeat(${labels.length},1fr)` },
+      labels.map((s, i) => h('li', { class: i < step ? 'done' : i === step ? 'now' : '', 'aria-current': i === step ? 'step' : null }, s)));
     let body;
     const go = (n) => () => { step = n; draw(); };
-    if (step === 0) body = situationStep(T, go(1));
-    else if (step === 1) body = pointsStep(T, go(2));
-    else if (step === 2) body = compareStep(T, go(3));
-    else if (step === 3) body = tryStep(T, lesson, go(4));
-    else if (step === 4) body = quizStep(lesson, qi, (wasFirstTryRight) => {
+    const kind = kinds[step];
+    if (kind === 'situation') body = situationStep(T, go(step + 1));
+    else if (kind === 'points') body = pointsStep(T, go(step + 1));
+    else if (kind === 'terms') body = termsStep(T, go(step + 1));
+    else if (kind === 'compare') body = compareStep(T, go(step + 1));
+    else if (kind === 'try') body = tryStep(T, lesson, go(step + 1));
+    else if (kind === 'quiz') body = quizStep(lesson, qi, (wasFirstTryRight) => {
       if (wasFirstTryRight) firstTry++;
       qi++;
-      if (qi >= T.quiz.length) { progress = finishLesson(progress, lid, firstTry, T.quiz.length); save(); step = 5; }
+      if (qi >= T.quiz.length) { progress = finishLesson(progress, lid, firstTry, T.quiz.length); save(); step = kinds.length; }
       draw();
     });
     else body = resultStep(cid, course, lesson, firstTry, T.quiz.length);
@@ -188,10 +233,18 @@ function pointsStep(T, next) {
     nextBtn(next));
 }
 
+function termsStep(T, next) {
+  return h('section', {},
+    h('h1', {}, t().terms),
+    h('p', { class: 'muted' }, t().termsHint),
+    termsTable(T.terms),
+    nextBtn(next));
+}
+
 function compareStep(T, next) {
   const c = T.compare;
   return h('section', {},
-    h('h1', {}, t().compare),
+    h('h1', {}, c.title || t().compare),
     h('div', { class: 'cmp' },
       h('div', { class: 'cmp-bad' }, h('p', { class: 'eyebrow' }, t().weak), h('p', { class: 'mono-q' }, c.bad)),
       h('div', { class: 'cmp-good' }, h('p', { class: 'eyebrow' }, t().strong), h('p', { class: 'mono-q' }, c.good))),
@@ -212,7 +265,7 @@ function tryStep(T, lesson, next) {
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
   }
   return h('section', {},
-    h('h1', {}, t().tryIt),
+    h('h1', {}, T.terms ? t().task : t().tryIt),
     lesson.sim === 'promptLab' && promptLab(),
     h('p', {}, T.practice),
     promptBox,

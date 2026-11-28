@@ -170,3 +170,17 @@ footer.foot { text-align: center; color: var(--muted); font-size: 14px; padding:
 .lnum.done { background: var(--good-bg); border-color: var(--good); color: var(--good); }
 .badge .check { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--good); color: #0b1020; font-weight: 800; font-size: 20px; }
 .badge p { margin: 2px 0 0; }
+
+/* Лаборатория KUBERA */
+.labgrid { list-style: none; padding: 0; margin: 0 0 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.terms { width: 100%; border-collapse: collapse; margin: 0 0 16px; font-size: 16px; }
+.terms th, .terms td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.terms th { font-size: 13px; color: var(--muted); font-weight: 600; }
+@media (max-width: 620px) {
+  .terms thead { display: none; }
+  .terms tr { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .terms td { border: 0; padding: 0; }
+  .terms td:last-child { color: var(--muted); }
+}
+.learned { margin-top: 24px; }
+.areas { padding-left: 1.2em; display: grid; gap: 6px; }

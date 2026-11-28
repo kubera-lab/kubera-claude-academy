@@ -25,3 +25,14 @@ export const COURSES = [
     title: { ru: 'Личный ИИ-ассистент', en: 'Your own AI assistant' },
     sub: { ru: 'Постоянные инструкции под ваши задачи', en: 'Standing instructions for your tasks' } },
 ];
+
+// «Лаборатория KUBERA»: отдельный раздел. Технологии на обезличенных примерах из проектов KUBERA (учебная мебельная фабрика, помощник Замбала).
+// Программа раздела: docs/KUBERA-LAB.md.
+export const LAB_COURSES = [
+  { id: 'k1', icon: '🧪', open: true,
+    title: { ru: 'Технологии мебельной фабрики', en: 'Technology at a furniture factory' },
+    sub: { ru: 'Проверка цифр, документы, безопасность, GitHub и облако на примере учебной мебельной фабрики', en: 'Number checks, documents, security, GitHub and the cloud, using a practice furniture factory as the example' } },
+  { id: 'k2', icon: '🤖', open: true,
+    title: { ru: 'Локальный ИИ и агенты', en: 'Local AI and agents' },
+    sub: { ru: 'Ollama, лицензии моделей, агенты, проверка источников, MCP, расписание и память на примере помощника Замбалы', en: 'Ollama, model licences, agents, source checks, MCP, scheduling and memory, using the Dzambala assistant as the example' } },
+];
