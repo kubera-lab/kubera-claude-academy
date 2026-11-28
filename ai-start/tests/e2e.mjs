@@ -162,6 +162,7 @@ for (const [label, ctxOpts] of configs) {
     await page.getByRole('heading', { name: 'Технологии RIDGE' }).waitFor();
     assert.equal(await page.locator('a.lesson').count(), 1);
     await page.getByText(/Пройдите первый урок/).waitFor();
+    await page.getByRole('heading', { name: 'Журнал навыков' }).waitFor();
     await noHorizontalScroll(page);
     if (shots) await page.screenshot({ path: `${shots}/${label}-lab-course.png`, fullPage: true });
   });
@@ -190,24 +191,29 @@ for (const [label, ctxOpts] of configs) {
     await page.goto(BASE + '#/k1');
     await page.reload();
     await page.getByText(/Мой словарь: 5 терминов/).waitFor();
-    await page.getByText('Data Quality').first().waitFor();
+    await page.locator('.journal tbody tr').first().waitFor();
+    assert.equal(await page.locator('.journal tbody tr').count(), 1);
+    assert.match(await page.locator('.journal tbody tr').first().innerText(), /\d{4}-\d{2}-\d{2}[\s\S]*Data Quality/);
     assert.equal(await page.locator('a.lesson').count(), 2);
     await page.getByRole('link', { name: /Повторить ошибки \(1\)/ }).waitFor();
     await noHorizontalScroll(page);
     if (shots) await page.screenshot({ path: `${shots}/${label}-lab-results.png`, fullPage: true });
   });
 
-  await check(`${label}: все 5 уроков лаборатории и значок`, async () => {
+  await check(`${label}: все уроки лаборатории, значок и полный журнал`, async () => {
     for (const l of LAB1.lessons.slice(1)) { await page.goto(BASE + `#/k1/${l.id}`); await passLesson(page, l); }
     await page.goto(BASE + '#/k1');
     await page.getByText(/Курс пройден/).waitFor();
     const n = LAB1.lessons.reduce((a, l) => a + l.ru.terms.length, 0);
     await page.getByText(`Мой словарь: ${n} терминов`).waitFor();
+    assert.equal(await page.locator('.journal tbody tr').count(), LAB1.lessons.length);
+    if (shots) await page.screenshot({ path: `${shots}/${label}-lab-journal.png`, fullPage: true });
   });
 
   await check(`${label}: лаборатория на английском`, async () => {
     await page.getByRole('button', { name: 'English' }).click();
     await page.getByText(/My glossary/).waitFor();
+    await page.getByRole('heading', { name: 'Skills log' }).waitFor();
     await page.goto(BASE + '#/k1/k1l3');
     await page.getByRole('heading', { name: 'Two-step sign-in and access rights' }).waitFor();
   });

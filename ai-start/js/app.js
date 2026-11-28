@@ -161,7 +161,13 @@ function learnedView(course) {
     done.length === 0
       ? h('p', { class: 'muted' }, t().learnedEmpty)
       : [
-          h('ul', { class: 'areas' }, done.map((l) => h('li', {}, h('strong', {}, l.area), ' · ', L(l).title))),
+          h('table', { class: 'terms journal' },
+            h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t().jDate), h('th', { scope: 'col' }, t().jArea), h('th', { scope: 'col' }, t().jLesson), h('th', { scope: 'col' }, t().jScore))),
+            h('tbody', {}, done.map((l) => h('tr', {},
+              h('td', {}, (progress.when || {})[l.id] || '—'),
+              h('td', { lang: 'en' }, h('strong', {}, l.area)),
+              h('td', {}, L(l).title),
+              h('td', {}, `${(progress.scores || {})[l.id] ?? 0}/${l.key.length}`))))),
           h('h3', {}, t().glossary(done.reduce((n, l) => n + L(l).terms.length, 0))),
           termsTable(done.flatMap((l) => L(l).terms)),
         ]);

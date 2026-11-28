@@ -48,7 +48,7 @@ export function validateLesson(lesson) {
 export const STORE_KEY = 'kubera-ai-start.v1';
 
 export function emptyProgress() {
-  return { lang: null, done: {}, mistakes: [], last: null, stars: {}, scores: {} };
+  return { lang: null, done: {}, mistakes: [], last: null, stars: {}, scores: {}, when: {} };
 }
 
 /** Безопасно разобрать сохранённый прогресс. Любой мусор → пустой прогресс. */
@@ -64,6 +64,7 @@ export function parseProgress(raw) {
       last: typeof p.last === 'string' ? p.last : null,
       stars: p.stars && typeof p.stars === 'object' ? p.stars : e.stars,
       scores: p.scores && typeof p.scores === 'object' ? p.scores : e.scores,
+      when: p.when && typeof p.when === 'object' ? p.when : e.when,
     };
   } catch {
     return emptyProgress();
@@ -78,7 +79,8 @@ export function recordAnswer(progress, qid, ok) {
 }
 
 /** Урок пройден: сохраняем звёзды (1–3 по числу верных ответов с первого раза). */
-export function finishLesson(progress, lessonId, firstTryCorrect, total) {
+/** date — дата первого прохождения (YYYY-MM-DD) для журнала навыков; сохраняется только первая. */
+export function finishLesson(progress, lessonId, firstTryCorrect, total, date = new Date().toISOString().slice(0, 10)) {
   const stars = firstTryCorrect === total ? 3 : firstTryCorrect >= total / 2 ? 2 : 1;
   const prev = progress.stars[lessonId] || 0;
   return {
@@ -86,6 +88,7 @@ export function finishLesson(progress, lessonId, firstTryCorrect, total) {
     done: { ...progress.done, [lessonId]: true },
     stars: { ...progress.stars, [lessonId]: Math.max(prev, stars) },
     scores: { ...(progress.scores || {}), [lessonId]: Math.max((progress.scores || {})[lessonId] || 0, firstTryCorrect) },
+    when: { ...(progress.when || {}), [lessonId]: (progress.when || {})[lessonId] || date },
   };
 }
 

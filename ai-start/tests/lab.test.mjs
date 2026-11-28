@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { LAB1 } from '../data/lab1.js';
 import { LAB_COURSES, COURSES } from '../data/courses.js';
-import { validateLesson, checkAnswer } from '../js/logic.js';
+import { validateLesson, checkAnswer, finishLesson, emptyProgress, parseProgress } from '../js/logic.js';
 
 test('лаборатория: отдельный раздел, курс k1 открыт, основные 8 курсов не тронуты', () => {
   assert.deepEqual(LAB_COURSES.map((c) => c.id), ['k1']);
@@ -11,14 +11,14 @@ test('лаборатория: отдельный раздел, курс k1 от�
   assert.ok(LAB_COURSES.every((c) => c.title.ru && c.title.en && c.sub.ru && c.sub.en));
 });
 
-test('лаборатория: 5 уроков по 4 вопроса, у каждого направление', () => {
-  assert.equal(LAB1.lessons.length, 5);
+test('лаборатория: 8 уроков по 4 вопроса, у каждого направление', () => {
+  assert.equal(LAB1.lessons.length, 8);
   for (const l of LAB1.lessons) {
     assert.equal(l.key.length, 4, l.id);
     assert.ok(l.area, l.id);
     assert.match(l.id, /^k1l\d$/);
   }
-  assert.equal(new Set(LAB1.lessons.map((l) => l.id)).size, 5);
+  assert.equal(new Set(LAB1.lessons.map((l) => l.id)).size, 8);
 });
 
 test('лаборатория: каждый урок собран полностью на обоих языках, включая термины', () => {
@@ -78,4 +78,25 @@ test('лаборатория: checkAnswer работает на уроках л�
   const l = LAB1.lessons[2];
   assert.equal(checkAnswer(l.ru, l.key, 1, l.key[1]).ok, true);
   assert.equal(checkAnswer(l.ru, l.key, 1, (l.key[1] + 1) % 4).ok, false);
+});
+
+test('лаборатория: 12 технологий из плана владельца есть в словаре', () => {
+  const terms = new Set(LAB1.lessons.flatMap((l) => l.en.terms.map(([t]) => t.split(' (')[0])));
+  for (const t of ['Cloud computing', 'Database', 'Authentication', 'Access control', 'Data validation', 'OCR', 'Backup', 'Recovery',
+    'Deployment', 'Workflow', 'AI inference', 'API']) assert.ok(terms.has(t), t);
+});
+
+test('лаборатория: про выключенный Mini PC урок не утверждает, что это уже проверено', () => {
+  const l5 = LAB1.lessons.find((l) => l.id === 'k1l5');
+  const k = l5.key[0];
+  assert.match(l5.ru.quiz[0].o[k][0], /ещё не проведена/);
+});
+
+test('журнал навыков: сохраняется дата первого прохождения', () => {
+  let p = finishLesson(emptyProgress(), 'k1l1', 3, 4, '2026-11-28');
+  assert.equal(p.when.k1l1, '2026-11-28');
+  p = finishLesson(p, 'k1l1', 4, 4, '2026-12-01');
+  assert.equal(p.when.k1l1, '2026-11-28');
+  assert.equal(p.scores.k1l1, 4);
+  assert.deepEqual(parseProgress(JSON.stringify(p)).when, { k1l1: '2026-11-28' });
 });
