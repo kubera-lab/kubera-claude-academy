@@ -2,11 +2,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { LAB1 } from '../data/lab1.js';
+import { LAB2 } from '../data/lab2.js';
+const LABS = [LAB1, LAB2];
+const ALL = LABS.flatMap((c) => c.lessons);
 import { LAB_COURSES, COURSES } from '../data/courses.js';
 import { validateLesson, checkAnswer, finishLesson, emptyProgress, parseProgress } from '../js/logic.js';
 
-test('лаборатория: отдельный раздел, курс k1 открыт, основные 8 курсов не тронуты', () => {
-  assert.deepEqual(LAB_COURSES.map((c) => c.id), ['k1']);
+test('лаборатория: отдельный раздел, курсы k1 и k2 открыты, основные 8 курсов не тронуты', () => {
+  assert.deepEqual(LAB_COURSES.map((c) => c.id), ['k1', 'k2']);
   assert.equal(COURSES.length, 8);
   assert.ok(LAB_COURSES.every((c) => c.title.ru && c.title.en && c.sub.ru && c.sub.en));
 });
@@ -19,10 +22,13 @@ test('лаборатория: 8 уроков по 4 вопроса, у кажд�
     assert.match(l.id, /^k1l\d$/);
   }
   assert.equal(new Set(LAB1.lessons.map((l) => l.id)).size, 8);
+  assert.equal(LAB2.lessons.length, 7);
+  for (const l of LAB2.lessons) { assert.equal(l.key.length, 4, l.id); assert.ok(l.area); assert.match(l.id, /^k2l\d$/); }
+  assert.equal(new Set(ALL.map((l) => l.id)).size, ALL.length);
 });
 
 test('лаборатория: каждый урок собран полностью на обоих языках, включая термины', () => {
-  for (const l of LAB1.lessons) {
+  for (const l of ALL) {
     assert.deepEqual(validateLesson(l), [], l.id);
     for (const lang of ['ru', 'en']) assert.ok(Array.isArray(l[lang].terms) && l[lang].terms.length >= 3, `${l.id} ${lang}`);
     assert.equal(l.ru.terms.length, l.en.terms.length, `${l.id}: одинаковое число терминов`);
@@ -31,11 +37,11 @@ test('лаборатория: каждый урок собран полност�
 });
 
 test('лаборатория: произношение в RU-версии записано русскими буквами', () => {
-  for (const l of LAB1.lessons) for (const [, , say] of l.ru.terms) assert.match(say, /[а-яё]/i, `${l.id}: ${say}`);
+  for (const l of ALL) for (const [, , say] of l.ru.terms) assert.match(say, /[а-яё]/i, `${l.id}: ${say}`);
 });
 
 test('лаборатория: верный ответ начинается со «Верно» / «Correct», 4 варианта, ответы на разных местах', () => {
-  for (const l of LAB1.lessons) {
+  for (const l of ALL) {
     for (const lang of ['ru', 'en']) l[lang].quiz.forEach((q) => assert.equal(q.o.length, 4));
     l.key.forEach((k, i) => {
       assert.match(l.ru.quiz[i].o[k][1], /^Верно/, `${l.id} q${i} ru`);
@@ -47,7 +53,7 @@ test('лаборатория: верный ответ начинается со 
 });
 
 test('лаборатория: уроки короткие (до 10 минут, до 4 тезисов по 320 символов)', () => {
-  for (const l of LAB1.lessons) {
+  for (const l of ALL) {
     assert.ok(l.minutes <= 10);
     for (const lang of ['ru', 'en']) {
       assert.ok(l[lang].points.length <= 4);
@@ -58,7 +64,7 @@ test('лаборатория: уроки короткие (до 10 минут, �
 
 test('лаборатория: цифры в примерах сходятся', () => {
   const r2 = (x) => Math.round(x * 100) / 100;
-  // EM-2207 и счёт за электричество из проверок RIDGE (учебные данные).
+  // EM-2207 и счёт за электричество из проверок учебной фабрики (учебные данные).
   assert.equal(r2(513 * 0.2), 102.6); assert.equal(r2(513 + 102.6), 615.6);
   assert.equal(r2(312.4 * 0.2), 62.48); assert.equal(r2(312.4 + 62.48), 374.88);
   // 10 000 нейронов в день, задача около 163 нейронов → около 60 задач.
@@ -101,10 +107,10 @@ test('журнал навыков: сохраняется дата первог�
   assert.deepEqual(parseProgress(JSON.stringify(p)).when, { k1l1: '2026-11-28' });
 });
 
-test('лаборатория: публичные материалы не раскрывают внутренние данные RIDGE', async () => {
+test('лаборатория: публичные материалы не раскрывают название и внутренние данные реального проекта', async () => {
   const fs = await import('node:fs');
-  const files = ['data/lab1.js', 'docs/KUBERA-LAB.md', 'SOURCES.md', 'README.md'];
-  const banned = [/kubera-ridge-ai/i, /ridge-office/i, /ridgefactory/i, /ridge-workplace/i, /pages\.dev/i,
+  const files = ['data/lab1.js', 'data/lab2.js', 'data/courses.js', 'js/i18n.js', 'docs/KUBERA-LAB.md', 'docs/ROUTE-KUBERA.md', 'SOURCES.md', 'README.md'];
+  const banned = [/RIDGE/i, /Rebecca|Ребекк/i, /kubera-ridge-ai/i, /ridge-office/i, /ridgefactory/i, /ridge-workplace/i, /pages\.dev/i,
     /\/api\//, /PR #2\b/, /RIDGE-0\d{3}/, /задача #3/, /\b[0-9a-f]{7,40}\b(?=.*commit)/i, /site\/vendor/];
   for (const f of files) {
     const text = fs.readFileSync(new URL('../' + f, import.meta.url), 'utf8');
@@ -112,7 +118,26 @@ test('лаборатория: публичные материалы не рас�
   }
 });
 
-test('лаборатория: уроки 2 и 8 отражают выложенную версию RIDGE', () => {
+test('лаборатория: уроки 2 и 8 отражают актуальную версию программы фабрики', () => {
   const all = JSON.stringify(LAB1);
   assert.doesNotMatch(all, /ещё не выложен|not yet released|not on the sites yet/);
+});
+
+test('курс 2: в уроках нет имён компьютеров, путей и адресов почты', () => {
+  const all = JSON.stringify(LAB2);
+  assert.doesNotMatch(all, /WIN-[A-Z0-9]{5,}|[A-Z]:\\\\|C:\\|Users\\|\bcc22|@[a-z0-9-]+\.[a-z]{2,}/i);
+  assert.doesNotMatch(all, /(api[_-]?key|token|secret)\s*[:=]/i);
+});
+
+test('курс 2: непроверенное названо непроверенным', () => {
+  const all = JSON.stringify(LAB2);
+  for (const s of ['ещё не проверен', 'NOT TESTED', 'not been tested', 'not tested']) assert.ok(all.includes(s), s);
+  // Модель 7–8B ещё не запускали: урок не должен говорить, что она проверена.
+  const l1 = LAB2.lessons[0];
+  assert.match(l1.ru.quiz[3].o[l1.key[3]][0], /7–8B на новом компьютере ещё нет/);
+});
+
+test('курс 2: факты из проверенных источников записаны точно', () => {
+  const all = JSON.stringify(LAB2);
+  for (const s of ['127.0.0.1', 'Apache-2.0', 'MIT', 'cc-by-nc-sa-4.0', '397 МБ', '21 с']) assert.ok(all.includes(s), s);
 });

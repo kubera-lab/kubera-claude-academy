@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { COURSE1 } from '../data/course1.js';
 import { LAB1 } from '../data/lab1.js';
+import { LAB2 } from '../data/lab2.js';
 
 const require = createRequire(import.meta.url);
 const { chromium, devices } = require('playwright');
@@ -66,7 +67,7 @@ for (const [label, ctxOpts] of configs) {
     await page.getByRole('heading', { level: 1 }).waitFor();
     assert.equal(await page.locator('.grid li').count(), 8);
     assert.equal(await page.locator('.grid a.card').count(), 1);
-    assert.equal(await page.locator('.labgrid a.card').count(), 1);
+    assert.equal(await page.locator('.labgrid a.card').count(), 2);
     await noHorizontalScroll(page);
     if (shots) await page.screenshot({ path: `${shots}/${label}-home.png`, fullPage: true });
   });
@@ -158,8 +159,8 @@ for (const [label, ctxOpts] of configs) {
   await check(`${label}: лаборатория открывается с главной, словарь пока пуст`, async () => {
     await page.goto(BASE);
     await page.getByRole('heading', { name: 'Лаборатория KUBERA' }).waitFor();
-    await page.locator('.labgrid a.card').click();
-    await page.getByRole('heading', { name: 'Технологии RIDGE' }).waitFor();
+    await page.locator('.labgrid a.card').first().click();
+    await page.getByRole('heading', { name: 'Технологии мебельной фабрики' }).waitFor();
     assert.equal(await page.locator('a.lesson').count(), 1);
     await page.getByText(/Пройдите первый урок/).waitFor();
     await page.getByRole('heading', { name: 'Журнал навыков' }).waitFor();
@@ -216,6 +217,29 @@ for (const [label, ctxOpts] of configs) {
     await page.getByRole('heading', { name: 'Skills log' }).waitFor();
     await page.goto(BASE + '#/k1/k1l3');
     await page.getByRole('heading', { name: 'Two-step sign-in and access rights' }).waitFor();
+  });
+
+  await check(`${label}: курс 2 «Локальный ИИ и агенты»: все уроки, термины, журнал`, async () => {
+    await page.getByRole('button', { name: 'Русский' }).click();
+    await page.goto(BASE);
+    await page.locator('.labgrid a.card').nth(1).click();
+    await page.getByRole('heading', { name: 'Локальный ИИ и агенты' }).waitFor();
+    await page.goto(BASE + '#/k2/k2l1');
+    await page.getByRole('button', { name: /Дальше/ }).click();
+    await page.getByRole('button', { name: /Дальше/ }).click();
+    await page.getByRole('heading', { name: 'Термины' }).waitFor();
+    await page.getByText('ло́кал мо́дел').waitFor();
+    await noHorizontalScroll(page);
+    if (shots) await page.screenshot({ path: `${shots}/${label}-lab2-terms.png`, fullPage: true });
+    await page.goto(BASE + '#/k2');
+    for (const l of LAB2.lessons) { await page.goto(BASE + `#/k2/${l.id}`); await passLesson(page, l); }
+    await page.goto(BASE + '#/k2');
+    await page.getByText(/Курс пройден/).waitFor();
+    assert.equal(await page.locator('.journal tbody tr').count(), LAB2.lessons.length);
+    const n = LAB2.lessons.reduce((a, l) => a + l.ru.terms.length, 0);
+    await page.getByText(`Мой словарь: ${n} терминов`).waitFor();
+    await noHorizontalScroll(page);
+    if (shots) await page.screenshot({ path: `${shots}/${label}-lab2-journal.png`, fullPage: true });
   });
 
   await check(`${label}: лаборатория без ошибок в консоли`, async () => { assert.deepEqual(errors, []); });

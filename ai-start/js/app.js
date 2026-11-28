@@ -2,13 +2,14 @@
 import { COURSES, LAB_COURSES } from '../data/courses.js';
 import { COURSE1 } from '../data/course1.js';
 import { LAB1 } from '../data/lab1.js';
+import { LAB2 } from '../data/lab2.js';
 import { UI } from './i18n.js';
 import {
   STORE_KEY, parseProgress, emptyProgress, recordAnswer, finishLesson,
   nextLesson, isUnlocked, checkAnswer, labResult, LAB_PARTS, LAB_TEXT,
 } from './logic.js';
 
-const COURSE_DATA = { c1: COURSE1, k1: LAB1 };
+const COURSE_DATA = { c1: COURSE1, k1: LAB1, k2: LAB2 };
 const ALL_META = [...COURSES, ...LAB_COURSES];
 const app = document.getElementById('app');
 
