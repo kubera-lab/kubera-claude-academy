@@ -122,12 +122,12 @@ export const LAB1 = {
       key: [2, 0, 3, 1],
       ru: {
         title: 'PDF, сканы и OCR: почему один файл читается, а другой нет',
-        situation: 'В RIDGE загрузили два учебных счёта. Первый, PDF из бухгалтерской программы, прочитан сразу: 250, НДС пусто, 250, с пометкой «VAT not stated». Второй, скан бумажного счёта, программа не приняла и попросила ввести главное вручную. Оба файла называются .pdf. В чём разница?',
+        situation: 'В RIDGE загрузили два учебных счёта. Первый, PDF из бухгалтерской программы, прочитан сразу: 250, НДС пусто, 250, с пометкой «VAT not stated». Второй, скан бумажного счёта, тоже прочитан, но с пометкой «прочитано со скана» и процентом уверенности. Оба файла называются .pdf. Почему к ним разное доверие?',
         points: [
           ['Внутри PDF бывает разное', 'PDF — это «конверт». В нём может лежать настоящий текст (его можно выделить мышкой и скопировать) или просто картинка страницы, как фотография.'],
           ['Текстовый слой', 'Если текст настоящий, программа читает его напрямую. RIDGE достаёт его библиотекой pdf.js (Mozilla, открытая лицензия Apache-2.0) прямо в браузере, а потом проверяет цифры своими правилами.'],
           ['Скан — это картинка', 'В скане букв нет, есть только точки. Чтобы получить из него текст, нужно распознавание, OCR. Оно иногда путает символы, например 8 и 3 или 0 и O, а в счёте это деньги.'],
-          ['Что сейчас в RIDGE', 'На сайтах RIDGE (27.11) скан отклоняется, важные поля вводятся вручную. В новой версии, ещё не выложенной, есть распознавание Tesseract (Apache-2.0): учебный кривой снимок счёта прочитан верно, уверенность 95%.'],
+          ['Что сейчас в RIDGE', 'С 28.11 RIDGE читает и сканы, и фото: распознавание Tesseract (Apache-2.0) работает прямо в браузере. Учебное кривое фото счёта прочитано верно, уверенность 95%. При уверенности ниже 70% программа просит сверить каждую цифру с бумагой.'],
         ],
         terms: [
           ['PDF (Portable Document Format)', 'формат документа', 'пи-ди-эф'],
@@ -147,7 +147,7 @@ export const LAB1 = {
         takeaways: [
           'PDF с текстом читается точно, скан требует распознавания (OCR).',
           'OCR может перепутать символы, поэтому денежные поля после него нужно проверять.',
-          'На сайтах RIDGE скан пока вводится вручную; новая версия распознаёт его и при уверенности ниже 70% просит сверить каждую цифру с бумагой.',
+          'RIDGE распознаёт сканы с пометкой и процентом уверенности; цифры после OCR человек сверяет с бумагой, а ручной ввод остаётся запасным путём.',
         ],
         quiz: [
           { q: 'Как быстро понять, есть ли в PDF текстовый слой?',
@@ -160,11 +160,11 @@ export const LAB1 = {
                 ['Формат файлов для счетов', 'Формат — это PDF. OCR — способ достать текст из картинки.'],
                 ['Защита PDF паролем', 'Защита паролем — другое дело.'],
                 ['Сжатие файла', 'К сжатию OCR отношения не имеет.']] },
-          { q: 'Что новая версия RIDGE делает с результатом распознавания скана?',
+          { q: 'Что RIDGE делает с результатом распознавания скана?',
             o: [['Молча сохраняет цифры в учёт', 'Нет. Ошибка распознавания в денежной цифре опасна, поэтому результат всегда виден человеку.'],
                 ['Отправляет счёт поставщику на проверку', 'ИИ и программа ничего не отправляют сами.'],
                 ['Сама пересчитывает НДС, если цифра плохо читается', 'Нет. Выдумывать или пересчитывать цифры нельзя, плохо прочитанное поле проверяет человек.'],
-                ['Помечает «прочитано со скана», показывает уверенность, а ниже 70% просит сверить каждую цифру с бумагой', 'Верно. OCR полезен, но его результат проверяют. Эта версия пока не выложена на сайты.']] },
+                ['Помечает «прочитано со скана», показывает уверенность, а ниже 70% просит сверить каждую цифру с бумагой', 'Верно. OCR полезен, но его результат всегда проверяет человек.']] },
           { q: 'Как по-английски «ручной ввод»?',
             o: [['Text layer — текст лэйер', 'Это «текстовый слой».'],
                 ['Manual entry — мэньюал энтри', 'Верно. Manual entry — данные вводит человек.'],
@@ -174,12 +174,12 @@ export const LAB1 = {
       },
       en: {
         title: 'PDFs, scans and OCR: why one file reads and another does not',
-        situation: 'Two practice invoices were uploaded to RIDGE. The first, a PDF from accounting software, was read at once: 250, VAT empty, 250, flagged "VAT not stated". The second, a scan of a paper invoice, was refused with a request to type the key parts. Both files end in .pdf. What is the difference?',
+        situation: 'Two practice invoices were uploaded to RIDGE. The first, a PDF from accounting software, was read at once: 250, VAT empty, 250, flagged "VAT not stated". The second, a scan of a paper invoice, was read too, but marked "Read from a scan" with a confidence percentage. Both files end in .pdf. Why are they trusted differently?',
         points: [
           ['A PDF can hold different things', 'A PDF is an envelope. Inside can be real text (you can select and copy it) or just a picture of the page, like a photo.'],
           ['Text layer', 'If the text is real, the program reads it directly. RIDGE takes it out with pdf.js (Mozilla, open Apache-2.0 licence) right in the browser, then checks the numbers with its own rules.'],
           ['A scan is a picture', 'A scan has no letters, only dots. Getting text out needs recognition, OCR. It sometimes confuses characters, such as 8 and 3 or 0 and O, and on an invoice that is money.'],
-          ['RIDGE today', 'On the RIDGE sites (27.11) a scan is refused and key fields are typed. A newer version, not yet released, reads scans with Tesseract (Apache-2.0): a crooked practice photo of an invoice was read correctly with 95% confidence.'],
+          ['RIDGE today', 'Since 28.11 RIDGE reads scans and photos with Tesseract (Apache-2.0) right in the browser. A crooked practice photo of an invoice was read correctly with 95% confidence. Below 70% confidence it asks for every figure to be checked against the paper.'],
         ],
         terms: [
           ['PDF (Portable Document Format)', 'a document file format', 'pee-dee-ef'],
@@ -199,7 +199,7 @@ export const LAB1 = {
         takeaways: [
           'A PDF with text reads exactly; a scan needs recognition (OCR).',
           'OCR can confuse characters, so money fields must be checked after it.',
-          'On the RIDGE sites scans are still typed by hand; the new version reads them and below 70% confidence asks for every figure to be checked against the paper.',
+          'RIDGE reads scans with a mark and a confidence percentage; a person checks the figures against the paper, and typing by hand stays as the fallback.',
         ],
         quiz: [
           { q: 'How can you quickly tell whether a PDF has a text layer?',
@@ -212,11 +212,11 @@ export const LAB1 = {
                 ['A file format for invoices', 'The format is PDF. OCR is a way to get text out of a picture.'],
                 ['Password protection for PDFs', 'Password protection is something else.'],
                 ['File compression', 'OCR has nothing to do with compression.']] },
-          { q: 'What does the new RIDGE version do with the result of reading a scan?',
+          { q: 'What does RIDGE do with the result of reading a scan?',
             o: [['Saves the figures silently', 'No. A recognition error in a money field is dangerous, so the result is always shown to a person.'],
                 ['Sends the invoice to the supplier to check', 'Neither AI nor the program sends anything by itself.'],
                 ['Recalculates VAT itself if a figure is hard to read', 'No. Figures are never invented or recalculated; a poorly read field is checked by a person.'],
-                ['Marks it "Read from a scan", shows the confidence, and below 70% asks for every figure to be checked against the paper', 'Correct. OCR helps, but its result is checked. This version is not on the sites yet.']] },
+                ['Marks it "Read from a scan", shows the confidence, and below 70% asks for every figure to be checked against the paper', 'Correct. OCR helps, but a person always checks its result.']] },
           { q: 'What is the English term for typing data in by hand?',
             o: [['Text layer', 'That is the real text inside a PDF.'],
                 ['Manual entry', 'Correct. Manual entry means a person types the data.'],
@@ -232,11 +232,11 @@ export const LAB1 = {
       key: [3, 1, 2, 0],
       ru: {
         title: 'Двухэтапный вход и права доступа',
-        situation: 'На рабочем сайте RIDGE вход по одному паролю не работает: после пароля нужен ещё 6-значный код из приложения на телефоне. А учётная запись для обслуживания сайта видит историю изменений, но не видит заказы клиентов. Зачем такие сложности, если директоров всего двое?',
+        situation: 'На рабочем сайте RIDGE вход по одному паролю не работает: после пароля нужен ещё 6-значный код из приложения на телефоне. А учётная запись для обслуживания сайта не видит заказы клиентов. Зачем такие сложности, если директоров всего двое?',
         points: [
           ['Пароль может утечь', 'Пароли угадывают, крадут через поддельные письма или берут из утечек других сайтов. Второй шаг, код из приложения на вашем телефоне, защищает, даже если пароль уже у злоумышленника.'],
           ['Код из приложения', 'Приложение-аутентификатор (Google Authenticator, Microsoft Authenticator и другие) каждые 30 секунд показывает новый код. Он одноразовый: повторно его ввести нельзя.'],
-          ['Минимум прав', 'Каждый получает только те права, которые нужны для его работы. На рабочем сайте RIDGE обслуживанию запрещены заказы, ИИ и управление командой (ответ 403), но открыта история изменений.'],
+          ['Минимум прав', 'Каждый получает только те права, которые нужны для его работы. В RIDGE учётной записи обслуживания закрыты заказы и данные клиентов (ответ 403): для её работы они не нужны.'],
           ['Доступ можно забрать', 'Владелец выключает доступ обслуживания, и тот сразу выходит из системы. Все действия записываются в историю. Пароли и коды настройки никогда не пересылают в чатах.'],
         ],
         terms: [
@@ -269,7 +269,7 @@ export const LAB1 = {
                 ['Код из приложения на телефоне директора, без него вход не открывается', 'Верно. Это и есть второй шаг: нужен ещё телефон владельца аккаунта.']] },
           { q: 'Учётная запись обслуживания запросила список заказов. Что ответит рабочий сайт RIDGE?',
             o: [['Покажет все заказы', 'Нет. Обслуживанию заказы не нужны для работы.'],
-                ['403 — доступ запрещён', 'Верно. Это и есть минимум прав: обслуживанию открыта история изменений, но не заказы.'],
+                ['403 — доступ запрещён', 'Верно. Это и есть минимум прав: обслуживанию заказы для работы не нужны.'],
                 ['Попросит пароль директора', 'Сайт не раздаёт чужие права.'],
                 ['Выключит сайт', 'Сайт продолжает работать, просто отказывает в этом запросе.']] },
           { q: 'Как по-английски «минимум необходимых прав»?',
@@ -286,11 +286,11 @@ export const LAB1 = {
       },
       en: {
         title: 'Two-step sign-in and access rights',
-        situation: 'On the RIDGE work site, a password alone does not let you in: after it you need a 6-digit code from an app on your phone. And the account used to maintain the site sees the change history but not customer orders. Why so much effort when there are only two directors?',
+        situation: 'On the RIDGE work site, a password alone does not let you in: after it you need a 6-digit code from an app on your phone. And the account used to maintain the site cannot see customer orders. Why so much effort when there are only two directors?',
         points: [
           ['Passwords leak', 'Passwords get guessed, stolen through fake emails or taken from other sites\' leaks. The second step, a code from an app on your phone, protects you even if an attacker already has the password.'],
           ['A code from an app', 'An authenticator app (Google Authenticator, Microsoft Authenticator and others) shows a new code every 30 seconds. It is single-use: the same code cannot be entered twice.'],
-          ['Least privilege', 'Everyone gets only the rights their job needs. On the RIDGE work site, maintenance is refused orders, AI and team management (answer 403) but can open the change history.'],
+          ['Least privilege', 'Everyone gets only the rights their job needs. In RIDGE the maintenance account is refused orders and customer data (answer 403): its job does not need them.'],
           ['Access can be taken back', 'The owner switches maintenance access off and it is signed out at once. Every action is recorded. Passwords and setup codes are never sent in chats.'],
         ],
         terms: [
@@ -323,7 +323,7 @@ export const LAB1 = {
                 ['The code from the app on the director\'s phone; without it there is no way in', 'Correct. That is the second step: you also need the account owner\'s phone.']] },
           { q: 'The maintenance account asks for the list of orders. What does the RIDGE work site answer?',
             o: [['It shows all orders', 'No. Maintenance does not need orders to do its job.'],
-                ['403 — access refused', 'Correct. That is least privilege: maintenance can open the change history, not orders.'],
+                ['403 — access refused', 'Correct. That is least privilege: maintenance does not need orders for its job.'],
                 ['It asks for a director\'s password', 'The site does not hand out other people\'s rights.'],
                 ['It shuts the site down', 'The site keeps working; it just refuses that request.']] },
           { q: 'What is the English term for "only the rights you need"?',
@@ -346,7 +346,7 @@ export const LAB1 = {
       key: [0, 2, 1, 3],
       ru: {
         title: 'GitHub: ветка, PR и тесты',
-        situation: 'Claude каждый день меняет код RIDGE, но рабочая версия в главной ветке (main) не меняется без вашего разрешения. Все изменения лежат в отдельной ветке и в запросе на слияние PR #2, а перед каждой выкладкой проходят автоматические тесты: 125 из 125. Как это устроено и зачем вам, руководителю, это понимать?',
+        situation: 'Claude каждый день меняет код RIDGE, но рабочая версия в главной ветке (main) не меняется без вашего разрешения. Все изменения лежат в отдельной ветке и в запросе на слияние (PR), а перед каждой выкладкой проходят все автоматические тесты. Как это устроено и зачем вам, руководителю, это понимать?',
         points: [
           ['Репозиторий', 'Репозиторий — папка проекта на GitHub со всей историей изменений. Каждое сохранение (commit) помнит, кто, когда и что изменил. Любое изменение можно найти и отменить.'],
           ['Ветка', 'Ветка (branch) — отдельная копия для работы. main — главная, «чистовая». Работа над RIDGE идёт в своей ветке, поэтому main остаётся нетронутой, пока вы не решите иначе.'],
@@ -367,7 +367,7 @@ export const LAB1 = {
           good: 'Изменения в отдельной ветке → PR с описанием → автоматические тесты → проверка владельцем → слияние в main только с разрешения.',
           why: 'Ошибка в main сразу ломает рабочую версию. Ветка и PR дают время проверить, а тесты ловят поломки до того, как их увидит пользователь.',
         },
-        practice: 'Откройте на GitHub репозиторий kubera-lab/kubera-ridge-ai, вкладку Pull requests, и найдите PR #2. Посмотрите вкладку «Files changed» (что изменилось) и статус проверок. Ничего не нажимайте, только смотрите. Затем задайте чат-боту вопрос ниже.',
+        practice: 'Откройте на GitHub любой свой репозиторий, вкладку Pull requests, и выберите открытый запрос на слияние. Посмотрите вкладку «Files changed» (что изменилось) и статус проверок. Ничего не нажимайте, только смотрите. Затем задайте чат-боту вопрос ниже.',
         prompt: 'Я руководитель проекта, не программист. Объясни на примере ремонта в квартире, что такое ветка (branch), pull request и merge в GitHub. Какие 3 вопроса мне стоит задавать разработчику перед тем, как разрешить слияние в main?',
         takeaways: [
           'main — чистовая версия, работа идёт в отдельной ветке.',
@@ -399,7 +399,7 @@ export const LAB1 = {
       },
       en: {
         title: 'GitHub: branches, PRs and tests',
-        situation: 'Claude changes the RIDGE code every day, yet the working version in the main branch does not change without your permission. All changes sit in a separate branch and in pull request PR #2, and before each release they pass automatic tests: 125 of 125. How does this work, and why should you, as the project lead, understand it?',
+        situation: 'Claude changes the RIDGE code every day, yet the working version in the main branch does not change without your permission. All changes sit in a separate branch and in a pull request (PR), and before each release they pass all automatic tests. How does this work, and why should you, as the project lead, understand it?',
         points: [
           ['Repository', 'A repository is the project folder on GitHub with its whole change history. Each saved change (commit) records who changed what and when. Any change can be found and undone.'],
           ['Branch', 'A branch is a separate copy to work on. main is the master, "clean" copy. RIDGE work happens in its own branch, so main stays untouched until you decide otherwise.'],
@@ -420,7 +420,7 @@ export const LAB1 = {
           good: 'Changes in a separate branch → PR with a description → automatic tests → owner review → merge into main only with permission.',
           why: 'A mistake in main breaks the working version at once. A branch and a PR give time to check, and tests catch breakage before a user sees it.',
         },
-        practice: 'On GitHub, open the repository kubera-lab/kubera-ridge-ai, the Pull requests tab, and find PR #2. Look at "Files changed" (what changed) and the status of the checks. Do not press anything, just look. Then ask a chatbot the question below.',
+        practice: 'On GitHub, open any of your repositories, the Pull requests tab, and pick an open pull request. Look at "Files changed" (what changed) and the status of the checks. Do not press anything, just look. Then ask a chatbot the question below.',
         prompt: 'I am a project lead, not a programmer. Using a home renovation as the example, explain what a branch, a pull request and a merge are on GitHub. What 3 questions should I ask the developer before I allow a merge into main?',
         takeaways: [
           'main is the clean version; work happens in a separate branch.',
@@ -461,9 +461,9 @@ export const LAB1 = {
         situation: 'Сайты RIDGE, их база данных и ИИ работают не на вашем Mini PC, а в облаке Cloudflare. Mini PC нужен только для выкладки новых версий. Сейчас всё это стоит 0 фунтов в месяц. Где граница бесплатного и что будет, если директора начнут пользоваться ИИ каждый день?',
         points: [
           ['Облако', 'Облако — чужие мощные компьютеры, на которых работает ваша программа. Свой сервер не нужен: по устройству сайт открывается с телефона и при выключенных компьютерах. Живую проверку с выключенным Mini PC ещё предстоит провести.'],
-          ['Бесплатный тариф', 'Free tier — бесплатный объём. По ценам Cloudflare на 27.11.2026: база D1 — 5 млн чтений и 100 тыс. записей в день, 5 ГБ. Реально рабочий сайт RIDGE за сутки: 21 чтение и 3 записи.'],
-          ['Нейроны', 'ИИ в Cloudflare (Workers AI) считается в «нейронах» (neurons), это единица вычислений. Бесплатно 10 000 в день. Одна текстовая задача по оценке — около 165 нейронов.'],
-          ['Если станет больше', 'При очень активной работе (120 задач и 30 картинок в день) оценка — около 9,30 $ в месяц: тариф Workers Paid 5 $ плюс ИИ. Это оценка по допущениям, не счёт. Без вашего решения ничего платного не включается.'],
+          ['Бесплатный тариф', 'Free tier — бесплатный объём. По ценам Cloudflare на 27.11.2026: база D1 — 5 млн чтений и 100 тыс. записей в день, 5 ГБ. Реальный расход RIDGE сейчас намного ниже этих лимитов.'],
+          ['Нейроны', 'ИИ в Cloudflare (Workers AI) считается в «нейронах» (neurons), это единица вычислений. Бесплатно 10 000 в день. Одна текстовая задача по оценке — около 163 нейронов.'],
+          ['Если станет больше', 'При очень активной работе (120 задач и 30 картинок в день) оценка — около 9,30 $ в месяц: тариф Workers Paid 5 $ плюс ИИ. Это оценка по допущениям, не счёт. На бесплатном тарифе перерасход не превращается в счёт: сверх лимита ИИ отвечает ошибкой до полуночи по UTC. Без вашего решения ничего платного не включается.'],
         ],
         terms: [
           ['Cloud computing', 'облачные вычисления', 'клауд компьютинг'],
@@ -475,10 +475,10 @@ export const LAB1 = {
         compare: {
           title: 'Разбор: как неправильно и как правильно',
           bad: '«Облако бесплатное, значит, считать не нужно». Через месяц приходит счёт, о котором никто не знал.',
-          good: 'Известны лимиты бесплатного тарифа, реальный расход измеряется (21 чтение в сутки), есть оценка для низкой, обычной и высокой нагрузки, а платное включается только решением владельца.',
+          good: 'Известны лимиты бесплатного тарифа, реальный расход регулярно измеряется, есть оценка для низкой, обычной и высокой нагрузки, а платное включается только решением владельца.',
           why: 'Расход зависит от того, как пользуются программой. Если измерять его и сравнивать с лимитами, никаких сюрпризов не будет.',
         },
-        practice: 'Посчитайте сами: если одна задача ИИ стоит около 165 нейронов, сколько задач в день помещается в бесплатные 10 000? Ответ сверьте с калькулятором. Затем задайте чат-боту вопрос ниже.',
+        practice: 'Посчитайте сами: если одна задача ИИ стоит около 163 нейронов, сколько задач в день помещается в бесплатные 10 000? Ответ сверьте с калькулятором. Затем задайте чат-боту вопрос ниже.',
         prompt: 'Объясни простыми словами разницу между своим сервером и облаком для маленькой мастерской. Какие 3 риска у облака и как их уменьшить? Не называй цены, если не уверен в них, а скажи, где их проверить.',
         takeaways: [
           'По устройству RIDGE не зависит от вашего компьютера, но это доказывает только живая проверка с выключенным Mini PC, и она ещё впереди.',
@@ -491,10 +491,10 @@ export const LAB1 = {
                 ['По устройству сайт должен работать, но живая проверка с выключенным Mini PC ещё не проведена', 'Верно. Устройство системы — это ожидание. Доказательство — только реальная проверка с телефона при выключенных компьютерах.'],
                 ['Пропадут все данные', 'Данные хранятся в облачной базе D1, а не на Mini PC.'],
                 ['Это уже доказано, проверять не нужно', 'В отчётах RIDGE на 27.11 эта проверка указана как ещё не проведённая.']] },
-          { q: 'Примерно сколько задач ИИ в день помещается в бесплатные 10 000 нейронов, если одна задача — около 165?',
-            o: [['Около 60', 'Верно. 10 000 ÷ 165 ≈ 60 задач. Это оценка, реальный расход зависит от длины текста.'],
-                ['Около 6', 'Ошибка в 10 раз: 165 × 6 — это всего около 1 000.'],
-                ['Около 600', 'Ошибка в 10 раз: 165 × 600 — это почти 100 000.'],
+          { q: 'Примерно сколько задач ИИ в день помещается в бесплатные 10 000 нейронов, если одна задача — около 163?',
+            o: [['Около 60', 'Верно. 10 000 ÷ 163 ≈ 61 задача. Это оценка, реальный расход зависит от длины текста.'],
+                ['Около 6', 'Ошибка в 10 раз: 163 × 6 — это всего около 1 000.'],
+                ['Около 600', 'Ошибка в 10 раз: 163 × 600 — это почти 98 000.'],
                 ['Безлимитно', 'Бесплатный объём ограничен 10 000 нейронов в день.']] },
           { q: 'Как по-английски «бесплатный тариф» и как произносится?',
             o: [['Quota — квоута', 'Это лимит, квота.'],
@@ -513,9 +513,9 @@ export const LAB1 = {
         situation: 'The RIDGE sites, their database and AI run not on your Mini PC but in the Cloudflare cloud. The Mini PC is only used to release new versions. Right now it all costs £0 a month. Where is the free limit, and what happens if the directors start using AI every day?',
         points: [
           ['The cloud', 'The cloud is someone else\'s powerful computers that run your program. You need no server of your own: by design the site opens from a phone with your computers off. The live check with the Mini PC switched off is still to be done.'],
-          ['Free tier', 'A free allowance. By Cloudflare\'s prices on 27.11.2026: the D1 database gives 5 million reads and 100 thousand writes a day, 5 GB. Actual use of the RIDGE work site in 24 hours: 21 reads and 3 writes.'],
-          ['Neurons', 'AI on Cloudflare (Workers AI) is counted in "neurons", a unit of compute. 10,000 a day are free. One text task is estimated at about 165 neurons.'],
-          ['If use grows', 'With very heavy use (120 tasks and 30 images a day) the estimate is about $9.30 a month: Workers Paid $5 plus AI. This is an estimate from assumptions, not a bill. Nothing paid is switched on without your decision.'],
+          ['Free tier', 'A free allowance. By Cloudflare\'s prices on 27.11.2026: the D1 database gives 5 million reads and 100 thousand writes a day, 5 GB. Actual RIDGE use is far below these limits.'],
+          ['Neurons', 'AI on Cloudflare (Workers AI) is counted in "neurons", a unit of compute. 10,000 a day are free. One text task is estimated at about 163 neurons.'],
+          ['If use grows', 'With very heavy use (120 tasks and 30 images a day) the estimate is about $9.30 a month: Workers Paid $5 plus AI. It is an estimate, not a bill. On the free plan going over the limit is not billed: the AI returns errors until midnight UTC. Nothing paid is switched on without your decision.'],
         ],
         terms: [
           ['Cloud computing', 'using computers you rent over the internet', 'klowd kom-PYOO-ting'],
@@ -527,10 +527,10 @@ export const LAB1 = {
         compare: {
           title: 'Compare: the wrong way and the right way',
           bad: '"The cloud is free, so no need to count." A month later a bill arrives that nobody expected.',
-          good: 'Free-tier limits are known, actual use is measured (21 reads a day), there is an estimate for low, normal and high use, and paid plans are switched on only by the owner.',
+          good: 'Free-tier limits are known, actual use is measured regularly, there is an estimate for low, normal and high use, and paid plans are switched on only by the owner.',
           why: 'Cost depends on how the program is used. Measure it and compare it with the limits, and there are no surprises.',
         },
-        practice: 'Work it out yourself: if one AI task costs about 165 neurons, how many tasks a day fit into the free 10,000? Check with a calculator. Then ask a chatbot the question below.',
+        practice: 'Work it out yourself: if one AI task costs about 163 neurons, how many tasks a day fit into the free 10,000? Check with a calculator. Then ask a chatbot the question below.',
         prompt: 'Explain in plain words the difference between your own server and the cloud for a small workshop. What are 3 risks of the cloud and how can they be reduced? Do not quote prices unless you are sure; say where to check them.',
         takeaways: [
           'By design RIDGE does not depend on your computer, but only a live check with the Mini PC off proves it, and that is still to come.',
@@ -543,10 +543,10 @@ export const LAB1 = {
                 ['By design the site should keep working, but the live check with the Mini PC off has not been done', 'Correct. Design is an expectation. Only a real check from a phone with the computers off is proof.'],
                 ['All data is lost', 'The data is kept in the cloud D1 database, not on the Mini PC.'],
                 ['It is already proven, no need to check', 'The RIDGE reports of 27.11 list this check as not done yet.']] },
-          { q: 'About how many AI tasks a day fit into the free 10,000 neurons if one task is about 165?',
-            o: [['About 60', 'Correct. 10,000 ÷ 165 ≈ 60 tasks. It is an estimate; actual use depends on text length.'],
-                ['About 6', 'Off by ten times: 165 × 6 is only about 1,000.'],
-                ['About 600', 'Off by ten times: 165 × 600 is almost 100,000.'],
+          { q: 'About how many AI tasks a day fit into the free 10,000 neurons if one task is about 163?',
+            o: [['About 60', 'Correct. 10,000 ÷ 163 ≈ 61 tasks. It is an estimate; actual use depends on text length.'],
+                ['About 6', 'Off by ten times: 163 × 6 is only about 1,000.'],
+                ['About 600', 'Off by ten times: 163 × 600 is almost 98,000.'],
                 ['Unlimited', 'The free allowance is limited to 10,000 neurons a day.']] },
           { q: 'What is the English term for the free allowance?',
             o: [['Quota', 'That is a usage limit.'],
@@ -572,7 +572,7 @@ export const LAB1 = {
         points: [
           ['Резервная копия', 'Backup — копия данных, сохранённая отдельно от рабочей системы. Если рабочие данные пострадали, их берут из копии. Копия полезна, только если она свежая и лежит в другом месте.'],
           ['Восстановление', 'Recovery — возврат данных из копии. Копия, которую ни разу не восстанавливали, — это надежда, а не защита. Поэтому восстановление репетируют заранее, на учебных данных.'],
-          ['Репетиция RIDGE', 'Учебную базу выгрузили в файл (28 КБ) и восстановили в отдельную копию на Mini PC. Числа совпали с облаком: 6 заказов, 7 пользователей, 29 записей истории. Рабочую базу при этом не трогали.'],
+          ['Репетиция RIDGE', 'Учебную базу выгрузили в файл и восстановили в отдельную копию. Число заказов, пользователей и записей истории совпало с облаком. Рабочую базу при этом не трогали.'],
           ['Точки восстановления', 'База Cloudflare D1 сама хранит точки восстановления (Time Travel): 7 дней на бесплатном тарифе. Что ещё не решено: как часто делать копии рабочей базы и где их хранить. Это решает владелец.'],
         ],
         terms: [
@@ -602,7 +602,7 @@ export const LAB1 = {
                 ['Чтобы убедиться, что из копии действительно можно вернуть данные, и сверить числа', 'Верно. Копия без проверенного восстановления — это надежда, а не защита.'],
                 ['Чтобы удалить старые данные', 'Репетиция ничего не удаляет и шла в отдельную копию.']] },
           { q: 'Как проверили, что восстановление прошло верно?',
-            o: [['Сверили число записей с облаком: 6 заказов, 7 пользователей, 29 записей истории', 'Верно. Совпадение чисел показывает, что ничего не потерялось.'],
+            o: [['Сверили с облаком число заказов, пользователей и записей истории', 'Верно. Совпадение чисел показывает, что ничего не потерялось.'],
                 ['Спросили ИИ, всё ли в порядке', 'ИИ не может знать, что лежит в базе. Проверяют фактами.'],
                 ['Посмотрели на размер файла', 'Размер косвенно подсказывает, но не доказывает, что всё на месте.'],
                 ['Никак, раз ошибок не было', 'Отсутствие сообщений об ошибке — ещё не проверка.']] },
@@ -624,7 +624,7 @@ export const LAB1 = {
         points: [
           ['Backup', 'A copy of the data kept apart from the working system. If the working data is damaged, it comes back from the copy. A copy helps only if it is recent and kept somewhere else.'],
           ['Recovery', 'Getting data back from a copy. A copy that was never restored is a hope, not protection. That is why recovery is rehearsed in advance, on practice data.'],
-          ['The RIDGE rehearsal', 'The training database was exported to a file (28 KB) and restored into a separate copy on the Mini PC. The counts matched the cloud: 6 orders, 7 users, 29 history entries. The working database was not touched.'],
+          ['The RIDGE rehearsal', 'The training database was exported to a file and restored into a separate copy. The numbers of orders, users and history entries matched the cloud. The working database was not touched.'],
           ['Restore points', 'Cloudflare D1 keeps restore points itself (Time Travel): 7 days on the free plan. Not decided yet: how often to copy the working database and where to keep the copies. The owner decides.'],
         ],
         terms: [
@@ -654,7 +654,7 @@ export const LAB1 = {
                 ['To make sure data really comes back from the copy, and to compare the counts', 'Correct. A copy without tested recovery is a hope, not protection.'],
                 ['To delete old data', 'The rehearsal deletes nothing and used a separate copy.']] },
           { q: 'How was the recovery checked?',
-            o: [['The record counts were compared with the cloud: 6 orders, 7 users, 29 history entries', 'Correct. Matching counts show nothing was lost.'],
+            o: [['The numbers of orders, users and history entries were compared with the cloud', 'Correct. Matching counts show nothing was lost.'],
                 ['AI was asked whether everything was fine', 'AI cannot know what is in the database. Facts are checked.'],
                 ['The file size was looked at', 'Size hints at it but does not prove everything is there.'],
                 ['It was not, since there were no errors', 'No error message is not the same as a check.']] },
@@ -678,7 +678,7 @@ export const LAB1 = {
       key: [3, 1, 0, 2],
       ru: {
         title: 'Рабочий процесс: заказ от письма до «Закрыт»',
-        situation: 'Учебный заказ RIDGE-0001 с пометкой TEST прошёл в рабочей системе RIDGE весь путь: от письма клиента до статуса «Закрыт». Статусы менялись по порядку, а на важных шагах решение принимал человек. Почему программа не может просто сама двигать заказ дальше?',
+        situation: 'Учебный заказ с пометкой TEST прошёл в рабочей системе RIDGE весь путь: от письма клиента до статуса «Закрыт». Статусы менялись по порядку, а на важных шагах решение принимал человек. Почему программа не может просто сама двигать заказ дальше?',
         points: [
           ['Рабочий процесс', 'Workflow — цепочка шагов, через которую проходит работа. В RIDGE это путь заказа: письмо → карточка заказа → материалы → производство → контроль качества → доставка → «Закрыт».'],
           ['Статусы по порядку', 'В проверке 27.11 статусы шли так: «Материалы заказаны» → «Ждёт проверки» → «Готов к доставке» → «Доставлен» → «Закрыт». Каждый статус совпал на экране и на сервере, на компьютере и на телефоне.'],
@@ -730,7 +730,7 @@ export const LAB1 = {
       },
       en: {
         title: 'Workflow: an order from email to "Closed"',
-        situation: 'The practice order RIDGE-0001, marked TEST, went all the way through the RIDGE work system: from a customer email to "Closed". The statuses changed in order, and at the key steps a person decided. Why can\'t the program just move the order along by itself?',
+        situation: 'A practice order marked TEST went all the way through the RIDGE work system: from a customer email to "Closed". The statuses changed in order, and at the key steps a person decided. Why can\'t the program just move the order along by itself?',
         points: [
           ['Workflow', 'The chain of steps work goes through. In RIDGE it is the order\'s path: email → order card → materials → production → quality check → delivery → "Closed".'],
           ['Statuses in order', 'In the 27.11 check the statuses went: Materials ordered → Awaiting inspection → Ready for delivery → Delivered → Closed. Each status matched on screen and on the server, on a computer and on a phone.'],
@@ -790,10 +790,10 @@ export const LAB1 = {
         title: 'Как страница говорит с сервером и с ИИ: API и inference',
         situation: 'Директор нажимает в RIDGE «Разобрать письмо». Через несколько секунд появляется сводка и черновик ответа. Что происходит за кнопкой? Страница отправляет запрос серверу, сервер проверяет права, обращается к модели ИИ в Cloudflare и возвращает ответ. Разберём этот путь по шагам.',
         points: [
-          ['API', 'API — договорённость, как одна программа просит другую что-то сделать. Страница RIDGE обращается к серверу по адресам вида /api/… Например, /api/health отвечает, работает ли сайт и подключена ли база.'],
+          ['API', 'API — договорённость, как одна программа просит другую что-то сделать. Страница RIDGE обращается к своему серверу по определённым адресам. Например, есть адрес проверки состояния: он отвечает, работает ли сайт и подключена ли база.'],
           ['Коды ответов', 'Сервер отвечает числом: 200 — всё хорошо, 401 — вы не вошли, 403 — входить можно, но это действие вам запрещено, 409 — конфликт (кто-то уже изменил то же место). Эти коды проверяли на сайтах RIDGE.'],
           ['Inference', 'Inference — выполнение задачи готовой моделью ИИ. Модель не учится на ваших запросах, она применяет то, чему уже научена. В RIDGE текст разбирает Llama 3.3 70B (Meta), картинки рисует FLUX.2 klein 4B, обе в Cloudflare Workers AI.'],
-          ['Цена одного вызова', 'Каждый вызов модели расходует «нейроны» (бесплатно 10 000 в день). Поэтому в новой версии (ещё не выложена) сервер ограничивает частоту запросов на публичной демо-версии, чтобы один посетитель не израсходовал весь лимит.'],
+          ['Цена одного вызова', 'Каждый вызов модели расходует «нейроны» (бесплатно 10 000 в день). Поэтому сервер ограничивает частоту запросов на публичной демо-версии, чтобы один посетитель не израсходовал весь бесплатный лимит.'],
         ],
         terms: [
           ['API (Application Programming Interface)', 'интерфейс для связи программ', 'эй-пи-ай'],
@@ -834,7 +834,7 @@ export const LAB1 = {
                 ['Ключ испортится', 'Ключ не портится, его крадут.']] },
           { q: 'Как по-английски «ограничение частоты запросов»?',
             o: [['Endpoint — эндпойнт', 'Это адрес, по которому API принимает запрос.'],
-                ['Rate limit — рэйт лимит', 'Верно. В новой версии демо RIDGE (ещё не выложена): не больше 40 запросов к ИИ за 10 минут с одного подключения.'],
+                ['Rate limit — рэйт лимит', 'Верно. Например, демо-версия RIDGE ограничивает число запросов к ИИ с одного подключения за несколько минут.'],
                 ['Status code — стэйтэс коуд', 'Это код ответа.'],
                 ['Request — риквест', 'Это сам запрос.']] },
         ],
@@ -843,10 +843,10 @@ export const LAB1 = {
         title: 'How the page talks to the server and to AI: APIs and inference',
         situation: 'A director presses "Read email" in RIDGE. A few seconds later a summary and a draft reply appear. What happens behind the button? The page sends a request to the server, the server checks rights, calls the AI model in Cloudflare and returns the answer. Let\'s follow that path step by step.',
         points: [
-          ['API', 'An API is an agreement on how one program asks another to do something. The RIDGE page calls the server at addresses like /api/… For example, /api/health answers whether the site works and the database is connected.'],
+          ['API', 'An API is an agreement on how one program asks another to do something. The RIDGE page calls its own server at set addresses. For example, a health-check address answers whether the site works and the database is connected.'],
           ['Status codes', 'The server answers with a number: 200 — all fine, 401 — you are not signed in, 403 — you are signed in but this action is not allowed, 409 — conflict (someone already changed the same place). These were checked on the RIDGE sites.'],
           ['Inference', 'Inference is a ready AI model doing a task. The model does not learn from your requests; it applies what it already learned. In RIDGE, Llama 3.3 70B (Meta) reads text and FLUX.2 klein 4B draws pictures, both on Cloudflare Workers AI.'],
-          ['The cost of a call', 'Each model call uses "neurons" (10,000 free a day). So in the new version (not yet released) the server limits how often the public demo can be called, so one visitor cannot use up the allowance.'],
+          ['The cost of a call', 'Each model call uses "neurons" (10,000 free a day). So the server limits how often the public demo can be called, so one visitor cannot use up the free allowance.'],
         ],
         terms: [
           ['API (Application Programming Interface)', 'how programs ask each other for work', 'ay-pee-eye'],
@@ -887,7 +887,7 @@ export const LAB1 = {
                 ['The key would wear out', 'Keys do not wear out; they get stolen.']] },
           { q: 'What is the English term for a cap on how often you can ask?',
             o: [['Endpoint', 'That is the address where an API takes a request.'],
-                ['Rate limit', 'Correct. In the new version of the RIDGE demo (not yet released): at most 40 AI requests per 10 minutes from one connection.'],
+                ['Rate limit', 'Correct. For example, the RIDGE demo caps the number of AI requests from one connection within a few minutes.'],
                 ['Status code', 'That is the answer code.'],
                 ['Request', 'That is the request itself.']] },
         ],

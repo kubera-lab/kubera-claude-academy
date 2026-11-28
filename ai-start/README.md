@@ -40,7 +40,7 @@ npm start            # или: python3 -m http.server 8080
 ## Проверки
 
 ```bash
-npm test             # 26 проверок логики и содержания уроков, включая Лабораторию KUBERA (Node 18+)
+npm test             # 28 проверок логики и содержания уроков, включая Лабораторию KUBERA (Node 18+)
 npm run e2e          # браузер: компьютер 1280px и iPhone 13, нужен playwright
 ```
 

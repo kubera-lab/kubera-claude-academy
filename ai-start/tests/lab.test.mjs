@@ -61,8 +61,8 @@ test('лаборатория: цифры в примерах сходятся', 
   // EM-2207 и счёт за электричество из проверок RIDGE (учебные данные).
   assert.equal(r2(513 * 0.2), 102.6); assert.equal(r2(513 + 102.6), 615.6);
   assert.equal(r2(312.4 * 0.2), 62.48); assert.equal(r2(312.4 + 62.48), 374.88);
-  // 10 000 нейронов в день, задача около 165 нейронов → около 60 задач.
-  assert.equal(Math.floor(10000 / 165), 60);
+  // 10 000 нейронов в день, задача около 163 нейронов → около 60 задач.
+  assert.equal(Math.floor(10000 / 163), 61);
   const all = JSON.stringify(LAB1);
   for (const s of ['615,60', '615.60', '374,88', '374.88', '10 000', '10,000']) assert.ok(all.includes(s), s);
 });
@@ -99,4 +99,20 @@ test('журнал навыков: сохраняется дата первог�
   assert.equal(p.when.k1l1, '2026-11-28');
   assert.equal(p.scores.k1l1, 4);
   assert.deepEqual(parseProgress(JSON.stringify(p)).when, { k1l1: '2026-11-28' });
+});
+
+test('лаборатория: публичные материалы не раскрывают внутренние данные RIDGE', async () => {
+  const fs = await import('node:fs');
+  const files = ['data/lab1.js', 'docs/KUBERA-LAB.md', 'SOURCES.md', 'README.md'];
+  const banned = [/kubera-ridge-ai/i, /ridge-office/i, /ridgefactory/i, /ridge-workplace/i, /pages\.dev/i,
+    /\/api\//, /PR #2\b/, /RIDGE-0\d{3}/, /задача #3/, /\b[0-9a-f]{7,40}\b(?=.*commit)/i, /site\/vendor/];
+  for (const f of files) {
+    const text = fs.readFileSync(new URL('../' + f, import.meta.url), 'utf8');
+    for (const re of banned) assert.doesNotMatch(text, re, f + ': ' + re);
+  }
+});
+
+test('лаборатория: уроки 2 и 8 отражают выложенную версию RIDGE', () => {
+  const all = JSON.stringify(LAB1);
+  assert.doesNotMatch(all, /ещё не выложен|not yet released|not on the sites yet/);
 });

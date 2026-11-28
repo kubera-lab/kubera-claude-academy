@@ -18,14 +18,17 @@
 
 ## Лаборатория KUBERA (курс «Технологии RIDGE»)
 
-Факты уроков взяты из кода и проверенных отчётов проекта RIDGE (репозиторий kubera-lab/kubera-ridge-ai, задача #3, 27.11.2026) на учебных данных. Официальные страницы ниже — для самостоятельного чтения. Цены Cloudflare сверены в проекте RIDGE 27.11.2026; остальные ссылки нужно перепроверить при следующем обновлении (из среды разработки 27.11 сайты не открывались).
+Факты уроков взяты из кода и проверенных отчётов проекта RIDGE на учебных данных (сверено с актуальной версией 28.11.2026). Внутренние детали RIDGE (адреса сайтов, адреса сервера, номера заказов и задач, точные счётчики) в публичные уроки не переносятся. Официальные страницы ниже проверены 28.11.2026: каждая открылась, и указанный факт на ней найден.
 
-| Источник | Урок | Лицензия / статус |
-|---|---|---|
-| [Cloudflare Workers AI: цены](https://developers.cloudflare.com/workers-ai/platform/pricing/) | 5 | официальная документация, сверено 27.11.2026 |
-| [Cloudflare D1: цены](https://developers.cloudflare.com/d1/platform/pricing/) и [лимиты](https://developers.cloudflare.com/d1/platform/limits/) | 5 | официальная документация, сверено 27.11.2026 |
-| [Mozilla pdf.js](https://mozilla.github.io/pdf.js/) | 2 | Apache-2.0 (файл лицензии лежит в RIDGE: site/vendor/pdfjs-LICENSE.txt) |
-| [RFC 6238 (TOTP)](https://datatracker.ietf.org/doc/html/rfc6238) | 3 | стандарт IETF; RIDGE: 6 цифр, 30 секунд |
-| [NCSC: двухэтапная проверка](https://www.ncsc.gov.uk/collection/top-tips-for-staying-secure-online/activate-2-step-verification-on-your-email) | 3 | официальная рекомендация, перепроверить ссылку |
-| [GitHub Docs: о pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) | 4 | официальная документация, перепроверить ссылку |
-| [UK Government Data Quality Framework](https://www.gov.uk/government/publications/the-government-data-quality-framework) | 1 | Open Government Licence, перепроверить ссылку |
+| Источник | Урок | Что сверено 28.11.2026 | Итог |
+|---|---|---|---|
+| [Cloudflare Workers AI: цены](https://developers.cloudflare.com/workers-ai/platform/pricing/) | 5 | 10 000 нейронов в день бесплатно; $0.011 за 1 000 нейронов сверх | PASS |
+| [Cloudflare D1: цены](https://developers.cloudflare.com/d1/platform/pricing/) | 5 | 5 млн чтений и 100 тыс. записей в день, 5 ГБ на бесплатном плане | PASS |
+| [Cloudflare D1: лимиты](https://developers.cloudflare.com/d1/platform/limits/) | 5 | база до 500 МБ на бесплатном плане | PASS |
+| [Cloudflare D1: Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/) | 6 | 7 дней на бесплатном плане, 30 дней на платном | PASS |
+| [Mozilla pdf.js](https://mozilla.github.io/pdf.js/) | 2 | лицензия Apache-2.0 | PASS |
+| [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) | 2 | лицензия Apache-2.0 | PASS |
+| [RFC 6238 (TOTP)](https://datatracker.ietf.org/doc/html/rfc6238) | 3 | шаг времени 30 секунд | PASS |
+| [NCSC: двухэтапная проверка](https://www.ncsc.gov.uk/collection/top-tips-for-staying-secure-online/activate-2-step-verification-on-your-email) | 3 | рекомендация включить 2SV | PASS |
+| [GitHub Docs: pull requests](https://docs.github.com/en/pull-requests) | 4 | раздел документации о pull request (старая длинная ссылка вела на другую страницу и заменена) | PASS |
+| [UK Government Data Quality Framework](https://www.gov.uk/government/publications/the-government-data-quality-framework) | 1 | страница открывается; перечень измерений качества дословно не сверялся | PASS (страница), NOT TESTED (измерения) |
